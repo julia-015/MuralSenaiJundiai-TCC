@@ -1,4 +1,5 @@
-from django.urls import path, include
+
+from django.urls import path
 from . import views
 
 urlpatterns = [
@@ -13,7 +14,10 @@ urlpatterns = [
     path('adicionarcurso', views.adicionarcurso, name='adicionarcurso'),
     path('adicionarturma', views.adicionarturma, name='adicionarturma'),
     path('adicionaraluno', views.adicionaraluno, name='adicionaraluno'),
-    path('editarcurso', views.editarcurso, name='editarcurso'),
-    path('editaraluno', views.editaraluno, name='editaraluno'),
+    path('editarcurso/<int:curso_id>/', views.editarcurso, name='editarcurso'),
+    path('editaraluno/<int:aluno_id>/', views.editaraluno, name='editaraluno'),  # Adicionada a URL com ID
+    path('excluircurso/<int:curso_id>/', views.excluircurso, name='excluircurso'),
     path('criar-aviso/', views.criar_aviso_ajax, name='criar_aviso_ajax'),
-]   
+    path('editaraviso/<int:aviso_id>/', views.editaraviso, name='editaraviso'),
+    path('excluiraviso/<int:aviso_id>/', views.excluiraviso, name='excluiraviso'),
+]

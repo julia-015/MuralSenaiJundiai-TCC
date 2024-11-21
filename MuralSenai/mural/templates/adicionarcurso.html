@@ -14,13 +14,13 @@ SENAI - ADICIONAR CURSO
             <div class="left-side">
                 <i id="icon-add" style="font-size: 150px; padding-left: 50px; "></i>
             </div>
-            <input id="form-picker"class="form-control iconpicker" placeholder="Icon Picker" aria-label="Icone Picker"
-                    aria-describedby="basic-addon1">
-                    <button id="btn-icon-add">Adicionar Icone</button>
+            <input id="form-picker" class="form-control iconpicker" placeholder="Icon Picker" aria-label="Icone Picker"
+                aria-describedby="basic-addon1">
+            <button id="btn-icon-add">Adicionar Icone</button>
             <div class="right-side">
                 <form method="POST">
                     {% csrf_token %}
-                    
+
                     <div class="form-group" style="display: block;">
                         <div>
                             <label for="nome">Curso:</label>
@@ -28,12 +28,14 @@ SENAI - ADICIONAR CURSO
                         <div>
                             {{form.curso}}
                         </div>
-                        
+
                     </div>
 
-                    <div>
-                        <button type="submit" action="POST" class="btn btn-primary">Adicionar</button>
-                    </div>
+                    {% if user.has_perm('app_name.can_add_courses') %}
+                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                    {% else %}
+                        <p>Você não tem permissão para adicionar cursos.</p>
+                    {% endif %}
 
                 </form>
             </div>
@@ -74,13 +76,13 @@ SENAI - ADICIONAR CURSO
     }
 
     .left-side {
-    text-align: center;
-    padding-left: 30px;
-    margin-left: 30px;
-    margin-bottom: 50px;
-    margin-right: 130px;
-    margin-top: 10px;
-}
+        text-align: center;
+        padding-left: 30px;
+        margin-left: 30px;
+        margin-bottom: 50px;
+        margin-right: 130px;
+        margin-top: 10px;
+    }
 
     .form-group {
         display: flex;
@@ -89,7 +91,7 @@ SENAI - ADICIONAR CURSO
         margin-bottom: 15px;
     }
 
-    .obs{
+    .obs {
         display: block;
         font-family: sans-serif;
         font-size: 20px;

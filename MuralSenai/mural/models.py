@@ -14,7 +14,11 @@ class Login(models.Model):
 class Cadastro(models.Model):
     nome = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    profissao = models.CharField(max_length=100)
+    PROFISSAO_CHOICES = [
+        ('coordenador', 'Coordenador'),
+        ('colaborador', 'Colaborador'),
+    ]
+    profissao = models.CharField(max_length=50, choices=PROFISSAO_CHOICES)
     criarsenha = models.TextField(max_length=1000)
 
     def set_senha(self, raw_password):
@@ -27,6 +31,14 @@ class Cadastro(models.Model):
 class ACurso(models.Model):
     curso = models.CharField(max_length=100)
     icon = models.CharField(max_length=100)
+
+    class Meta:
+        permissions = [
+            ("can_add_courses", "Pode adicionar cursos"),
+            ("can_edit_courses", "Pode editar cursos"),
+            ("can_delete_courses", "Pode excluir cursos")
+            
+        ]
 
     def __str__(self):
         return self.curso

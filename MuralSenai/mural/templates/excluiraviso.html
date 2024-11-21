@@ -1,0 +1,18 @@
+{% extends 'index.html' %}
+
+{% block title %}
+Excluir Aviso
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Excluir Aviso</h1>
+    <p>Você tem certeza que deseja excluir este aviso?</p>
+    <p>{{ aviso.mensagem }}</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Confirmar Exclusão</button>
+        <a href="{% url 'muralaviso' %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

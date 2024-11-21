@@ -9,7 +9,7 @@ SENAI - CARÔMETRO
 {% block body %}
 <div class="container" style="padding-top: 80px; display: block;">
 
-  <div style="justify-content: center; align-items: center; margin-top: 230px; position: fixed; ">
+  <div style="justify-content: center; align-items: center; margin-top: 230px; position: fixed;">
     <a href="http://127.0.0.1:8000/" style="color: rgb(183, 33, 33); font-size: 50px;">
       <i class="bi bi-arrow-left-circle-fill"></i>
     </a>
@@ -20,7 +20,7 @@ SENAI - CARÔMETRO
       <i class="bi bi-person-plus" style="font-size: 20px;"></i>
     </a>
     <p style="font-size: 20px;">|</p>
-    <a href="#">
+    <a href="#" id="delete-course">
       <i class="bi bi-trash3" style="font-size: 20px;"></i>
     </a>
   </div>
@@ -30,14 +30,58 @@ SENAI - CARÔMETRO
       <div class="button-group">
           <a href="{% url 'carometro2' curso_id=curso.id %}" class="button-1">
             <i class="bi bi-inboxes"></i>
-        </a>
-        <h1 class="button-title">{{ curso.curso }}</h1>
+          </a>
+          <h1 class="button-title">{{ curso.curso }}</h1>
+          <div class="edit-delete-buttons">
+              {% if user.has_perm "mural.can_edit_courses" %}
+                  <a href="{% url 'editarcurso' curso.id %}" class="edit-button">Editar</a> <!-- Link para editar -->
+              {% endif %}
+
+              {% if user.has_perm "mural.can_delete_courses" %}
+                  <a href="#" class="delete-button" data-id="{{ curso.id }}">Excluir</a> <!-- Link para excluir -->
+              {% endif %}
+          </div>
       </div>
     {% empty %}
       <p>Nenhum curso encontrado.</p>
     {% endfor %}
   </div>
 </div>
+
+<style>
+/* Seu estilo existente aqui */
+</style>
+
+<script>
+// Lógica JavaScript para excluir cursos
+document.querySelectorAll('.delete-button').forEach(button => {
+    button.addEventListener('click', function(e) {
+        e.preventDefault(); // Impede o comportamento padrão do link
+        const cursoId = this.getAttribute('data-id'); // Obtém o ID do curso
+
+        if (confirm('Tem certeza que deseja excluir este curso?')) {
+            fetch(`/excluircurso/${cursoId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}', // Adicionando o token CSRF para segurança
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'sucesso') {
+                    alert(data.mensagem); // Mensagem de sucesso
+                    location.reload(); // Recarrega a página para atualizar a lista de cursos
+                } else {
+                    alert(data.mensagem); // Mensagem de erro
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+        }
+    });
+});
+</script>
+
+{% endblock %}
 
 <style>
   body {
@@ -57,7 +101,7 @@ SENAI - CARÔMETRO
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: auto;
     margin: 0 auto;
   }
 
@@ -101,6 +145,42 @@ SENAI - CARÔMETRO
     color: var(--h1-color);
     transition: color 0.3s ease;
   }
-</style>
 
-{% endblock %}
+  .edit-delete-buttons {
+      display: flex;
+      gap: 10px; /* Espaçamento entre os botões de editar e excluir */
+      margin-top:10px; /* Margem acima dos botões */
+      justify-content:center; /* Centraliza os botões */
+   }
+</style>
+    
+<script>
+  // Lógica JavaScript para excluir cursos
+  document.querySelectorAll('.delete-button').forEach(button => {
+      button.addEventListener('click', function(e) {
+          e.preventDefault(); // Impede o comportamento padrão do link
+          const cursoId = this.getAttribute('data-id'); // Obtém o ID do curso
+  
+          if (confirm('Tem certeza que deseja excluir este curso?')) {
+              fetch(`/excluircurso/${cursoId}/`, {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRFToken': '{{ csrf_token }}', // Adicionando o token CSRF para segurança
+                  }
+              })
+              .then(response => response.json())
+              .then(data => {
+                  if (data.status === 'sucesso') {
+                      alert(data.mensagem); // Mensagem de sucesso
+                      location.reload(); // Recarrega a página para atualizar a lista de cursos
+                  } else {
+                      alert(data.mensagem); // Mensagem de erro
+                  }
+              })
+              .catch(error => console.error('Erro:', error));
+          }
+      });
+  });
+  </script>
+  
+  {% endblock %} 

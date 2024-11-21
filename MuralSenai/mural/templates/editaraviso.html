@@ -1,0 +1,16 @@
+{% extends 'index.html' %}
+
+{% block title %}
+Editar Aviso
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Editar Aviso</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <textarea name="mensagem" rows="4" required>{{ aviso.mensagem }}</textarea>
+        <button type="submit">Salvar Alterações</button>
+    </form>
+</div>
+{% endblock %}

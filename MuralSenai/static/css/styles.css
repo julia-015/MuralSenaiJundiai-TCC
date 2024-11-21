@@ -1,0 +1,30 @@
+/* Botões de edição e exclusão */
+.notice-actions {
+    margin-top: 10px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-right: 5px;
+    color: #fff;
+}
+
+.btn-edit {
+    background-color: #4CAF50; /* Verde */
+}
+
+.btn-edit:hover {
+    background-color: #45a049;
+}
+
+.btn-delete {
+    background-color: #f44336; /* Vermelho */
+}
+
+.btn-delete:hover {
+    background-color: #e53935;
+}
