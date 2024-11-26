@@ -1,18 +1,54 @@
 {% extends 'index.html' %}
 
+{% load static %}
+
 {% block title %}
 Excluir Aviso
 {% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1>Excluir Aviso</h1>
-    <p>Você tem certeza que deseja excluir este aviso?</p>
-    <p>{{ aviso.mensagem }}</p>
-    <form method="POST">
+<!-- excluir_aviso.html -->
+<div id="deleteModal" class="modal" style="display: flexbox; justify-content: center; align-items: center; margin-top: 200px;">
+    <div class="modal-content" style="background-color: red; padding: 50px; border-radius: 20px;">
+      <h1 style="margin-top: 0px; margin-bottom: 30px;">Excluir Aviso</h1>
+      <p>Você tem certeza que deseja excluir este aviso?</p>
+      <p style="background-color: #aaa; padding: 10px; border-radius: 10px;">{{ aviso.mensagem }}</p>
+      <form method="POST">
         {% csrf_token %}
-        <button type="submit">Confirmar Exclusão</button>
-        <a href="{% url 'muralaviso' %}">Cancelar</a>
-    </form>
-</div>
+        <button style="border-radius: 10px; color: black;" type="submit">Confirmar Exclusão</button>
+        <button style="background-color: rgb(236, 116, 116); border-radius: 10px; color: black;"><a style="color: black;" href="{% url 'muralaviso' %}" onclick="closeModal()">Cancelar</a></button>
+      </form>
+    </div>
+  </div>
+  
+  <script src="script.js"></script>
+
+  <style>
+      body {
+    background-color: black;
+    color: white;
+    font-family: sans-serif;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h1 {
+    color: var(--h1-color);
+    transition: color 0.3s ease;
+    font-family: 'Inria Serif', serif;
+    font-weight: bold;
+  }
+  </style>
+
+  {% block extra_js %}
+<!-- Linkando os arquivos CSS e JS estáticos -->
+<link rel="stylesheet" href="{% static 'css/navStyle.css' %}">
+<link rel="stylesheet" href="{% static 'dist/css/bootstrapicons-iconpicker.min.css' %}">
+<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'dist/js/bootstrapicon-iconpicker.min.js' %}"></script>
+{% endblock %}
+
+
 {% endblock %}

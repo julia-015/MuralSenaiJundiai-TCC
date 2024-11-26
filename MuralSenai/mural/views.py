@@ -12,7 +12,11 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
+from django.contrib.auth.decorators import user_passes_test
 
+@login_required
 def homepage(request):
     if request.method == "POST":
         form = FormLogin(request, data=request.POST)
@@ -32,8 +36,10 @@ def homepage(request):
 def inicio(request):
     return render(request, 'telainicial.html')
 
+@login_required
 def cadastro(request):
     context = {}
+    is_coordenador = request.user.groups.filter(name='Coordenador').exists()
     if request.method == "POST":
         form = FormCadastro(request.POST)
         if form.is_valid():
@@ -81,23 +87,39 @@ def cadastro(request):
         form = FormCadastro()
 
     context["form"] = form
+    context["is_coordenador"] = is_coordenador
     return render(request, 'cadastro.html', context)
 
+@login_required
 def carometro(request):
     cursos = ACurso.objects.all()
+
+    is_coordenador = request.user.groups.filter(name='Coordenador').exists()
+
     context = {'cursos': cursos}
+    context["is_coordenador"] = is_coordenador
     return render(request, 'carometro.html', context)
 
+@login_required
 def carometro2(request, curso_id):
     turmas = ATurma.objects.filter(curso=curso_id)
+
+    is_coordenador = request.user.groups.filter(name='Coordenador').exists()
+
     print("Turmas encontradas:", turmas)
     context = {'turmas': turmas}
+    context["is_coordenador"] = is_coordenador
     return render(request, 'carometro2.html', context)
 
+@login_required
 def carometro3(request, turma_id):
     alunos = AAluno.objects.filter(turma=turma_id)
+
+    is_coordenador = request.user.groups.filter(name='Coordenador').exists()
+
     print("Alunos encontrados:", alunos)
     context = {'alunos': alunos}
+    context["is_coordenador"] = is_coordenador
     return render(request, 'carometro3.html', context)
 
 def informacoescar(request, aluno_id):
@@ -105,7 +127,6 @@ def informacoescar(request, aluno_id):
     context = {'alunos': alunos}
     return render(request, 'informacoescar.html', context)
 
-@permission_required('mural.can_add_courses', raise_exception=True)
 def adicionarcurso(request):
     context = {}
     if request.method == "POST":
@@ -119,43 +140,44 @@ def adicionarcurso(request):
                     user_curso = ACurso(curso=var_curso)
                     user_curso.save()
                     context["success"] = "Curso adicionado com sucesso!"
+                    form = FormCurso()  
                     return redirect('carometro')
             except Exception as e:
                 context["error"] = f"Ocorreu um erro: {str(e)}"
-        context["form"] = form
+        context["form"] = form 
     else:
         form = FormCurso()
-        context["form"] = form
+    context["form"] = form
     return render(request, 'adicionarcurso.html', context)
 
 
-@permission_required('mural.can_edit_courses', raise_exception=True)
 def editarcurso(request, curso_id):
     curso = get_object_or_404(ACurso, id=curso_id)
 
     if request.method == 'POST':
         form = FormCurso(request.POST, instance=curso)
+        
         if form.is_valid():
             form.save()
-            messages.success(request, "Curso editado com sucesso!")  # Mensagem de sucesso
-            return redirect('carometro')  # Redireciona para a página de cursos após salvar
+            messages.success(request, "Curso editado com sucesso!")  
+            return redirect('carometro')  
+            
     else:
-        form = FormCurso(instance=curso)
+       form = FormCurso(instance=curso)
 
     return render(request, 'editarcurso.html', {'form': form, 'curso': curso})
 
-@permission_required('mural.can_delete_courses', raise_exception=True)
 def excluircurso(request, curso_id):
     curso = get_object_or_404(ACurso, id=curso_id)
+
     if request.method == 'POST':
         curso.delete()
         return JsonResponse({'status': 'sucesso', 'mensagem': 'Curso excluído com sucesso!'})
     return JsonResponse({'status': 'erro', 'mensagem': 'Método não permitido'}, status=405)
 
-
-
 def adicionarturma(request):
     context = {}
+
     if request.method == "POST":
         form = FormTurma(request.POST)
         if form.is_valid():
@@ -178,8 +200,30 @@ def adicionarturma(request):
         context["form"] = form
     return render(request, 'adicionarturma.html', context)
 
+def editarturma(request, turma_id):
+    turma = get_object_or_404(ATurma, id=turma_id)
+
+    if request.method == 'POST':
+        form = FormTurma(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Turma editado com sucesso!")  # Mensagem de sucesso
+            return redirect('carometro')  # Redireciona para a página de cursos após salvar
+    else:
+        form = FormTurma()
+
+    return render(request, 'editarturma.html', {'form': form, 'turma': turma})
+
+def excluirturma(request, turma_id):
+    turma = get_object_or_404(ATurma, id=turma_id)
+    if request.method == 'POST':
+        turma.delete()
+        return JsonResponse({'status': 'sucesso', 'mensagem': 'Turma excluída com sucesso!'})
+    return JsonResponse({'status': 'erro', 'mensagem': 'Método não permitido'}, status=405)
+
 def adicionaraluno(request):
     context = {}
+
     if request.method == "POST":
         form = FormAluno(request.POST)
         if form.is_valid():
@@ -214,55 +258,71 @@ def adicionaraluno(request):
 
 def editaraluno(request, aluno_id):
     aluno = get_object_or_404(AAluno, id=aluno_id)
-    
+
     if request.method == 'POST':
         form = FormAluno(request.POST, instance=aluno)
         if form.is_valid():
             form.save()
-            messages.success(request, "Aluno editado com sucesso!")  # Mensagem de sucesso
-            return redirect('carometro')  # Redireciona para a página de cursos após salvar
+            messages.success(request, "Aluno editado com sucesso!")
+            return redirect('carometro')
     else:
-        form = FormAluno(instance=aluno)
+        form = FormAluno()
 
-    return render(request,'editaraluno.html', {'form': form,'aluno': aluno})
+    return render(request, 'editaraluno.html', {'form': form, 'aluno': aluno})
+
+def excluiraluno(request, aluno_id):
+    aluno = get_object_or_404(ATurma, id=aluno_id)
+    if request.method == 'POST':
+        aluno.delete()
+        return JsonResponse({'status': 'sucesso', 'mensagem': 'Turma excluída com sucesso!'})
+    return JsonResponse({'status': 'erro', 'mensagem': 'Método não permitido'}, status=405)
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from .models import Aviso
+from django.views.decorators.csrf import csrf_exempt
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Aviso
+
 
 def muralaviso(request):
     if request.method == 'POST':
+        # Captura a mensagem do formulário e cria um novo aviso
         mensagem = request.POST.get('mensagem')
         if mensagem:
-            Aviso.objects.create(mensagem=mensagem)
-            return redirect('mural')
+            aviso = Aviso.objects.create(mensagem=mensagem)
+            return JsonResponse({'status': 'sucesso', 'mensagem': aviso.mensagem, 'data_criacao': aviso.data_criacao.strftime("%d/%m/%Y %H:%M")})
+        
+    # Busca todos os avisos para exibição
+    avisos = Aviso.objects.all()  # Obtém todos os avisos
 
-    avisos = Aviso.objects.order_by('-data_criacao')
+    # Renderiza o template, passando todos os avisos
     return render(request, 'muralaviso.html', {'avisos': avisos})
 
 def editaraviso(request, aviso_id):
     aviso = get_object_or_404(Aviso, id=aviso_id)
     if request.method == 'POST':
         mensagem = request.POST.get('mensagem')
-        if mensagem:
-            aviso.mensagem = mensagem
-            aviso.save()  # Salva as alterações no banco
-            return redirect('muralaviso')  # Redireciona para o mural
+        aviso.mensagem = mensagem
+        aviso.save()
+        return redirect('muralaviso')
     return render(request, 'editaraviso.html', {'aviso': aviso})
 
 def excluiraviso(request, aviso_id):
     aviso = get_object_or_404(Aviso, id=aviso_id)
     if request.method == 'POST':
-        aviso.delete()  # Remove o aviso do banco de dados
-        return redirect('muralaviso')  # Redireciona para o mural
+        aviso.delete()
+        return redirect('muralaviso')
     return render(request, 'excluiraviso.html', {'aviso': aviso})
 
-from django.http import JsonResponse 
-from django.views.decorators.csrf import csrf_exempt 
-
-@csrf_exempt  # Permite requisições AJAX sem CSRF (apenas para teste; idealmente configure CSRF adequadamente) 
-def criar_aviso_ajax(request): 
-   if request.method == 'POST': 
-       mensagem=request.POST.get('mensagem','') 
-       if mensagem: 
-           aviso=Aviso.objects.create(mensagem=mensagem) 
-           return JsonResponse({'status':'sucesso','mensagem':aviso.mensagem},status=201) 
-       else: 
-           return JsonResponse({'status':'erro','mensagem':'Mensagem vazia'},status=400) 
-   return JsonResponse({'status':'erro','mensagem':'Método não permitido'},status=405) 
+def criar_aviso_ajax(request):
+    if request.method == 'POST':
+        mensagem = request.POST.get('mensagem', '')
+        if mensagem:
+            aviso = Aviso.objects.create(mensagem=mensagem)
+            return JsonResponse({'status': 'sucesso', 'mensagem': aviso.mensagem}, status=201)
+        else:
+            return JsonResponse({'status': 'erro', 'mensagem': 'Mensagem vazia'}, status=400)
+    return JsonResponse({'status': 'erro', 'mensagem': 'Método não permitido'}, status=405)

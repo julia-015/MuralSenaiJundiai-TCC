@@ -8,6 +8,8 @@ SENAI - CADASTRO
 {% endblock %}
 
 {% block body %}
+
+{% if is_coordenador %}
 <div class="container">
   <div class="form-container">
     <h2 class="BEntrar" style="font-family: 'Inter', sans-serif;">CADASTRO</h2>
@@ -62,6 +64,7 @@ SENAI - CADASTRO
     </div>
   </div>
 </div>
+{% endif %}
 
 
 <style>

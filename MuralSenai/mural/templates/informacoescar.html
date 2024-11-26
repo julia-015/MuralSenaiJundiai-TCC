@@ -10,17 +10,6 @@ SENAI - INFORMAÇÕES CARÔMETRO
 
 <div class="container" style="padding-top: 100px;">
 
-    <div class="icones-btn">
-        <div class="caixa-btn">
-            <button class="btn">
-                <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn">
-                <i class="bi bi-trash3"></i>
-            </button>
-        </div>
-    </div>
-
     <!-- Seção do carômetro com informações do usuário -->
     <section class="carometro">
         <h1>Carômetro</h1>
@@ -33,6 +22,8 @@ SENAI - INFORMAÇÕES CARÔMETRO
                     Mãe: {{ aluno.nome_mae }} <br>
                     Turma: {{ aluno.turma }} <br>
                     Observações: {{ aluno.observacoes }} <br>
+
+                    <!-- Adicionando os botões de editar e excluir -->
                 </li>
             {% empty %}
                 <li>Não há alunos cadastrados.</li>
@@ -107,6 +98,33 @@ SENAI - INFORMAÇÕES CARÔMETRO
   h1 {
     color: var(--h1-color);
     transition: color 0.3s ease;
+  }
+
+  .edit-delete-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .edit-button, .delete-button {
+    color: white;
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    background-color: #007bff;
+    transition: background-color 0.3s ease;
+  }
+
+  .delete-button {
+    background-color: #dc3545;
+  }
+
+  .edit-button:hover {
+    background-color: #0056b3;
+  }
+
+  .delete-button:hover {
+    background-color: #c82333;
   }
 </style>
 

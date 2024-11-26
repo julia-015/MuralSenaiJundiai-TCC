@@ -3,42 +3,52 @@
 {% load static %}
 
 {% block title %}
-SENAI - EDITAR CURSO
+Editar curso
 {% endblock %}
 
 {% block body %}
 
-<div class="container">
-    <h1>Editar Curso: {{ curso.curso }}</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Salvar</button>
-    </form>
+<!-- Modal de edição -->
+<div id="editModal" class="modal"
+    style="display: flexbox; justify-content: center; align-items: center; margin-top: 200px;">
+    <div class="modal-content" style="background-color: red; padding: 50px; border-radius: 20px;">
+        <h1 style="margin-top: 0px; margin-bottom: 30px;">Editar curso</h1>
+        <form method="POST" style="display: flexbox; justify-content: center;">
+            {% csrf_token %}
+            <textarea style="border-radius: 10px;" name="mensagem" rows="4" required>{{ aviso.mensagem }}</textarea>
+            <br>
+            <br>
+            <button type="submit" style="color: black; background-color: #aaa; border-radius: 10px;">Salvar
+                Alterações</button>
+        </form>
+    </div>
 </div>
 
 <style>
     body {
-        background-color: black;
+        background-image: var(--background-image);
         color: white;
         font-family: sans-serif;
         margin: 0;
-        align-items: center;
-        min-height: 100vh;
-    }
-         
-    .container {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        margin-left: 100px;
+        align-items: center;
+        justify-content: center;
     }
 
-    .logo {
-        font-size: 3em;
+    h1 {
+        color: var(--h1-color);
+        transition: color 0.3s ease;
+        font-family: 'Inria Serif', serif;
         font-weight: bold;
-        margin-bottom: 20px;
     }
 </style>
+
+{% block extra_js %}
+<!-- Linkando os arquivos CSS e JS estáticos -->
+<link rel="stylesheet" href="{% static 'css/navStyle.css' %}">
+<link rel="stylesheet" href="{% static 'dist/css/bootstrapicons-iconpicker.min.css' %}">
+<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'dist/js/bootstrapicon-iconpicker.min.js' %}"></script>
+{% endblock %}
 
 {% endblock %}

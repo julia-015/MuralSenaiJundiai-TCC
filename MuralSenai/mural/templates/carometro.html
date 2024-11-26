@@ -10,81 +10,42 @@ SENAI - CARÔMETRO
 <div class="container" style="padding-top: 80px; display: block;">
 
   <div style="justify-content: center; align-items: center; margin-top: 230px; position: fixed;">
-    <a href="http://127.0.0.1:8000/" style="color: rgb(183, 33, 33); font-size: 50px;">
+    <a href="http://127.0.0.1:8000/inicio" style="color: rgb(183, 33, 33); font-size: 50px;">
       <i class="bi bi-arrow-left-circle-fill"></i>
     </a>
   </div>
-  
+
+  {% if is_coordenador %}
   <div class="buttons-adicionais" style="background-color: #d9d9d9; width: 110px; display: flex; align-items: center; justify-content: space-between; border-radius: 15px; padding-left: 20px; padding-right: 20px; margin-top: 20px; margin-left: 1080px; height: 50px; margin-bottom: 10px;">
     <a href="{% url 'adicionarcurso' %}">
-      <i class="bi bi-person-plus" style="font-size: 20px;"></i>
-    </a>
-    <p style="font-size: 20px;">|</p>
-    <a href="#" id="delete-course">
-      <i class="bi bi-trash3" style="font-size: 20px;"></i>
+      <i class="bi bi-person-plus" style="font-size: 20px;"></i> Adicionar Curso
     </a>
   </div>
+  {% endif %}
 
   <div class="buttons" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
-    {% for curso in cursos %}
+      {% for curso in cursos %}
       <div class="button-group">
           <a href="{% url 'carometro2' curso_id=curso.id %}" class="button-1">
             <i class="bi bi-inboxes"></i>
           </a>
           <h1 class="button-title">{{ curso.curso }}</h1>
+          
           <div class="edit-delete-buttons">
-              {% if user.has_perm "mural.can_edit_courses" %}
-                  <a href="{% url 'editarcurso' curso.id %}" class="edit-button">Editar</a> <!-- Link para editar -->
-              {% endif %}
-
-              {% if user.has_perm "mural.can_delete_courses" %}
-                  <a href="#" class="delete-button" data-id="{{ curso.id }}">Excluir</a> <!-- Link para excluir -->
-              {% endif %}
+            {% if is_coordenador %}
+            <a href="{% url 'editarcurso' curso.id %}" class="edit-button">Editar</a> <!-- Link para editar -->
+            <a href="#" class="delete-button" data-id="{{ curso.id }}">Excluir</a> <!-- Link para excluir -->
+            {% endif %}
           </div>
       </div>
-    {% empty %}
+      {% empty %}
       <p>Nenhum curso encontrado.</p>
-    {% endfor %}
+      {% endfor %}
   </div>
 </div>
 
 <style>
-/* Seu estilo existente aqui */
-</style>
-
-<script>
-// Lógica JavaScript para excluir cursos
-document.querySelectorAll('.delete-button').forEach(button => {
-    button.addEventListener('click', function(e) {
-        e.preventDefault(); // Impede o comportamento padrão do link
-        const cursoId = this.getAttribute('data-id'); // Obtém o ID do curso
-
-        if (confirm('Tem certeza que deseja excluir este curso?')) {
-            fetch(`/excluircurso/${cursoId}/`, {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}', // Adicionando o token CSRF para segurança
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'sucesso') {
-                    alert(data.mensagem); // Mensagem de sucesso
-                    location.reload(); // Recarrega a página para atualizar a lista de cursos
-                } else {
-                    alert(data.mensagem); // Mensagem de erro
-                }
-            })
-            .catch(error => console.error('Erro:', error));
-        }
-    });
-});
-</script>
-
-{% endblock %}
-
-<style>
-  body {
+   body {
     color: white;
     font-family: sans-serif;
     margin: 0;
@@ -181,6 +142,6 @@ document.querySelectorAll('.delete-button').forEach(button => {
           }
       });
   });
-  </script>
-  
-  {% endblock %} 
+</script>
+
+{% endblock %}

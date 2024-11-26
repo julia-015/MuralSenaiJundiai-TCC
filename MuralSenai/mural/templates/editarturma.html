@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-SENAI - EDITAR ALUNO
+SENAI - EDITAR TURMA
 {% endblock %}
 
 {% block body %}
@@ -17,32 +17,21 @@ SENAI - EDITAR ALUNO
 </div>
 
 <div class="container">
-    <h1>Editar Aluno</h1>
+    <h1>Editar Turma</h1>
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" value="{{ aluno.nome }}" class="input-field">
-        </div>
-        <div class="form-group">
-            <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" name="telefone" value="{{ aluno.telefone }}" class="input-field">
-        </div>
-        <div class="form-group">
-            <label for="nome_pai">Nome Pai:</label>
-            <input type="text" id="nome_pai" name="nome_pai" value="{{ aluno.nome_pai }}" class="input-field">
-        </div>
-        <div class="form-group">
-            <label for="nome_mae">Nome Mãe:</label>
-            <input type="text" id="nome_mae" name="nome_mae" value="{{ aluno.nome_mae }}" class="input-field">
-        </div>
-        <div class="form-group">
             <label for="turma">Turma:</label>
-            <input type="text" id="turma" name="turma" value="{{ aluno.turma }}" class="input-field">
+            <input type="text" id="turma" name="turma" value="{{ turma.turma }}" class="input-field">
         </div>
         <div class="form-group">
-            <label for="observacoes">Observações:</label>
-            <textarea id="observacoes" name="observacoes" class="input-area">{{ aluno.observacoes }}</textarea>
+            <label for="turma">Periodo:</label>
+            <input type="text" id="turma" name="turma" value="{{ turma.periodo }}" class="input-field">
+        </div>
+
+        <div class="form-group">
+            <label for="curso">Curso:</label>
+            <input type="text" id="curso" name="curso" value="{{ turma.curso }}" class="input-field">
         </div>
         <button type="submit" class="btn">Editar</button>
     </form>
@@ -102,7 +91,7 @@ SENAI - EDITAR ALUNO
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
     }
 
-    .container h1 {
+    .container h1 { 
         text-align: center;
         font-size: 28px;
         margin-bottom: 20px;

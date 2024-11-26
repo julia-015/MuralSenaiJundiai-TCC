@@ -121,19 +121,17 @@
         align-items: center;
         justify-content: space-between;
     }
-
-
 </style>
 
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav" style="gap: 865px">
+            <div class="navbar-nav" style="gap: 85px">
                 <div class="logo2">
                     <img src="/media/logo/logosenaivermelha.png" alt="Logo"
                         style="max-width: 200px; max-height: 200px;">
                 </div>
-                <div class="person" style="display: flex; align-items: center; gap: 10px;">
+                <div class="person" style="display: flex; align-items: center; gap: 10px; margin-right: 100px;">
                     <div class="Buttons-component">
                         <button id="theme-toggle" class="IconButton-homepage" style="background: none;">
                             <span class="material-symbols-outlined darkModeHomepage">
@@ -141,10 +139,20 @@
                             </span>
                         </button>
                     </div>
-                    <p style="font-size: 20px; display: flex;">|</p>
-                    <a href="http://127.0.0.1:8000/"
-                        style="font-size: 20px; text-decoration: none; margin-right: 10px;">Login</a>
-                    <i class="bi bi-person-circle" style="font-size: 30px;"></i>
+                    <p style="font-size: 20px; display: flex; margin-right: 10px">|</p>
+
+                    <div>
+                        {% if is_coordenador %}
+                        <a href="http://127.0.0.1:8000/cadastro"
+                            style="font-size: 20px; text-decoration: none; margin-left: 3px;">Cadastro</a>
+                        <i class="bi bi-person-circle" style="font-size: 30px;"></i>
+                        {% endif %}
+
+                        <a href="http://127.0.0.1:8000/"
+                            style="font-size: 20px; text-decoration: none; margin-right: 10px;">Login</a>
+                        <i class="bi bi-person-circle" style="font-size: 30px;"></i>
+                    </div>
+
                 </div>
             </div>
         </div>

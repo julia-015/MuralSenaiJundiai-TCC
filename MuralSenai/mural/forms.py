@@ -17,33 +17,30 @@ class FormCadastro(forms.Form):
     profissao = forms.ChoiceField(choices=PROFISSAO_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
     criarsenha = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-class FormAluno(forms.Form):
-    nome = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    telefone = forms.CharField(max_length=15, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    nome_pai = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    nome_mae = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    turma = forms.ModelChoiceField(
-        queryset=ATurma.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        empty_label="Selecione uma Turma"
-    )
-
-    observacoes = forms.CharField(
-        max_length=1000,
-        widget=forms.Textarea(attrs={'class': 'form-control'})
-    )
-
-class FormCurso(forms.ModelForm):
+class FormAluno(forms.ModelForm):
+    class Meta:
+        model = AAluno
+        fields = ['nome', 'telefone', 'nome_pai', 'nome_mae', 'turma', 'observacoes']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefone': forms.TextInput(attrs={'class': 'form-control'}),
+            'nome_pai': forms.TextInput(attrs={'class': 'form-control'}),
+            'nome_mae': forms.TextInput(attrs={'class': 'form-control'}),
+            'turma': forms.Select(attrs={'class': 'form-control'}),
+            'observacoes': forms.Textarea(attrs={'class': 'form-control'}),
+        }
+class FormCurso(forms.Form):
+    curso = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     class Meta:
         model = ACurso
-        fields = ['curso', 'icon']  # Inclua todos os campos que deseja editar
+        fields = ['curso']  # Inclua todos os campos que deseja editar
 
-class FormTurma(forms.Form):
-    turma = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    periodo = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    curso = forms.ModelChoiceField(
-        queryset=ACurso.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        empty_label="Selecione um curso"
-    )
+class FormTurma(forms.ModelForm):
+    class Meta:
+        model = ATurma
+        fields = ['turma', 'periodo', 'curso']  # Campos que você deseja editar
+        widgets = {
+            'turma': forms.TextInput(attrs={'class': 'form-control'}),
+            'periodo': forms.TextInput(attrs={'class': 'form-control'}),
+            'curso': forms.Select(attrs={'class': 'form-control'}),
+        }
