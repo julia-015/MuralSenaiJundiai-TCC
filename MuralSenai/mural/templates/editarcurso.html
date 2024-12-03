@@ -3,20 +3,37 @@
 {% load static %}
 
 {% block title %}
-Editar curso
+Editar Curso
 {% endblock %}
 
 {% block body %}
-
 <!-- Modal de edição -->
-<div id="editModal" class="modal"
-    style="display: flexbox; justify-content: center; align-items: center; margin-top: 200px;">
+<div id="editModal" class="modal" style="display: flex; justify-content: center; align-items: center; margin-top: 200px;">
     <div class="modal-content" style="background-color: red; padding: 50px; border-radius: 20px;">
-        <h1 style="margin-top: 0px; margin-bottom: 30px;">Editar curso</h1>
+        <h1 style="margin-top: 0px; margin-bottom: 30px;">Editar Curso</h1>
         <form method="POST">
             {% csrf_token %}
-            <label for="nome">Nome do Curso:</label>
-            <input type="text" id="nome" name="nome" value="{{ curso.nome }}" required>
+            <div class="form-group">
+                <label for="curso">Nome do Curso:</label>
+                <input type="text" id="curso" name="curso" value="{{ curso.curso }}" class="input-field" required>
+            </div>
+        
+            <!-- Exibir mensagens de erro -->
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        
             <button type="submit">Salvar</button>
         </form>
     </div>
@@ -38,6 +55,24 @@ Editar curso
         transition: color 0.3s ease;
         font-family: 'Inria Serif', serif;
         font-weight: bold;
+    }
+
+    .input-field {
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        background-color: white;
+        color: black;
+        width: calc(100% - 20px); /* Ajustando largura */
+    }
+
+    button {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        background-color: green; /* Cor do botão */
+        color: white;
     }
 </style>
 

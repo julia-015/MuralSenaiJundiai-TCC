@@ -27,6 +27,7 @@ class FormAluno(forms.ModelForm):
             'nome_pai': forms.TextInput(attrs={'class': 'form-control'}),
             'nome_mae': forms.TextInput(attrs={'class': 'form-control'}),
             'turma': forms.Select(attrs={'class': 'form-control'}),
+            'fotos':forms.Select(attrs={'class': 'form-control'}),
             'observacoes': forms.Textarea(attrs={'class': 'form-control'}),
         }
 class FormCurso(forms.Form):

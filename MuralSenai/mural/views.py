@@ -1,3 +1,4 @@
+
 # views.py
 from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login as auth_login
@@ -33,7 +34,10 @@ def homepage(request):
     return render(request, 'homepage.html', {'form': form})
 
 def inicio(request):
-    return render(request, 'telainicial.html')
+    context={}
+    is_coordenador = request.user.groups.filter(name='Coordenador').exists()
+    context["is_coordenador"] = is_coordenador
+    return render(request, 'telainicial.html', context)
 
 @login_required
 def cadastro(request):
@@ -116,7 +120,6 @@ def carometro3(request, turma_id):
 
     is_coordenador = request.user.groups.filter(name='Coordenador').exists()
 
-    print("Alunos encontrados:", alunos)
     context = {'alunos': alunos}
     context["is_coordenador"] = is_coordenador
     return render(request, 'carometro3.html', context)
@@ -149,22 +152,19 @@ def adicionarcurso(request):
     context["form"] = form
     return render(request, 'adicionarcurso.html', context)
 
-
 def editarcurso(request, curso_id):
     curso = get_object_or_404(ACurso, id=curso_id)
 
     if request.method == 'POST':
-        form = FormCurso(request.POST, instance=curso)
+        form = FormCurso(request.POST, instance=curso)  # Preenche o formulário com os dados existentes
         
         if form.is_valid():
-            form.save()
-            messages.success(request, "Curso editado com sucesso!")  
-            return redirect('carometro')  
-            
+            form.save()  # Salva as alterações no banco de dados
+            messages.success(request, "Curso editado com sucesso!")  # Mensagem de sucesso
+            return redirect('carometro')  # Redireciona para a página de cursos após salvar        
     else:
-       form = FormCurso(instance=curso)
-
-    return render(request, 'editarcurso.html', {'form': form, 'curso': curso})
+        form = FormCurso(instance=curso)  # Preenche o formulário com os dados existentes
+    return render(request, 'editarcurso.html', {'form': form, 'curso': curso})  
 
 def excluircurso(request, curso_id):
     curso = get_object_or_404(ACurso, id=curso_id)
@@ -230,16 +230,14 @@ def adicionaraluno(request):
             var_telefone = form.cleaned_data['telefone']
             var_nome_pai = form.cleaned_data['nome_pai']
             var_nome_mae = form.cleaned_data['nome_mae']
-            var_turma = form.cleaned_data['turma']  # Captura o curso/turma selecionado
+            var_turma = form.cleaned_data['turma']
             var_observacoes = form.cleaned_data.get('observacoes', '')
-            var_foto = form.cleaned_data.get('foto')  # Aqui capturamos o campo foto do formulário
+            var_foto = form.cleaned_data.get('foto')  # Captura o campo foto do formulário
 
             try:
-                # Verificando se o aluno já está cadastrado na turma
                 if AAluno.objects.filter(nome=var_nome, turma=var_turma).exists():
                     context["error"] = "Aluno já adicionado na turma!"
                 else:
-                    # Criando o objeto AAluno com os dados do formulário
                     user_aluno = AAluno(
                         nome=var_nome,
                         telefone=var_telefone,
@@ -250,7 +248,6 @@ def adicionaraluno(request):
                         foto=var_foto  # Adicionando a foto ao aluno
                     )
                     user_aluno.save()  # Salvando o aluno no banco de dados
-                    print("foto recebida", user_aluno.foto)
                     context["success"] = "Aluno adicionado com sucesso!"
                     return redirect('carometro')  # Redireciona para a página do carômetro
             except Exception as e:
@@ -311,14 +308,26 @@ from .models import Aviso
 
 from django.utils.timezone import now
 from datetime import timedelta
+from django.contrib.auth.decorators import login_required, user_passes_test
 
+
+from datetime import timedelta
+from django.utils.timezone import now
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Aviso
+
+@login_required
 def muralaviso(request):
+    is_coordenador = request.user.groups.filter(name='Coordenador').exists()
+
     if request.method == 'POST':
         mensagem = request.POST.get('mensagem')
         if mensagem:
             # Verifica duplicidade com base na mensagem e tempo de criação
             similar_aviso = Aviso.objects.filter(
-                mensagem=mensagem, 
+                mensagem=mensagem,
                 data_criacao__gte=now() - timedelta(seconds=5)
             ).exists()
             if similar_aviso:
@@ -326,31 +335,52 @@ def muralaviso(request):
 
             aviso = Aviso.objects.create(mensagem=mensagem)
             return JsonResponse({
-                'status': 'sucesso', 
-                'mensagem': aviso.mensagem, 
+                'status': 'sucesso',
+                'mensagem': aviso.mensagem,
                 'data_criacao': aviso.data_criacao.strftime("%d/%m/%Y %H:%M")
             })
 
     avisos = Aviso.objects.all()
-    return render(request, 'muralaviso.html', {'avisos': avisos})
+    context = {
+        'avisos': avisos,
+        'is_coordenador': is_coordenador
+    }
+    return render(request, 'muralaviso.html', context)
 
-
+@login_required
 def editaraviso(request, aviso_id):
+    is_coordenador = request.user.groups.filter(name='Coordenador').exists()
     aviso = get_object_or_404(Aviso, id=aviso_id)
+
     if request.method == 'POST':
         mensagem = request.POST.get('mensagem')
-        aviso.mensagem = mensagem
-        aviso.save()
-        return redirect('muralaviso')
-    return render(request, 'editaraviso.html', {'aviso': aviso})
+        if mensagem:
+            aviso.mensagem = mensagem
+            aviso.save()
+            return redirect('muralaviso')
 
+    context = {
+        'aviso': aviso,
+        'is_coordenador': is_coordenador
+    }
+    return render(request, 'editaraviso.html', context)
+
+@login_required
 def excluiraviso(request, aviso_id):
+    is_coordenador = request.user.groups.filter(name='Coordenador').exists()
     aviso = get_object_or_404(Aviso, id=aviso_id)
+
     if request.method == 'POST':
         aviso.delete()
         return redirect('muralaviso')
-    return render(request, 'excluiraviso.html', {'aviso': aviso})
 
+    context = {
+        'aviso': aviso,
+        'is_coordenador': is_coordenador
+    }
+    return render(request, 'excluiraviso.html', context)
+
+@login_required
 def criar_aviso_ajax(request):
     if request.method == 'POST':
         mensagem = request.POST.get('mensagem', '')
@@ -386,12 +416,16 @@ def excluirturma(request, turma_id):
 # Edição e exclusão de Cursos
 def editarcurso(request, curso_id):
     curso = get_object_or_404(ACurso, id=curso_id)
-    if request.method == 'POST':
-        curso.nome = request.POST.get('nome')
-        curso.save()
-        return redirect('carometro')  # Define uma página para listar os cursos
-    return render(request, 'editarcurso.html', {'curso': curso})
 
+    if request.method == 'POST':  # Verifica se o método é POST
+        novo_nome = request.POST.get('curso')  # Captura o novo nome do campo 'curso'
+        if novo_nome:  # Verifica se o novo nome foi enviado
+            curso.curso = novo_nome
+            curso.save()  # Salva as alterações no banco de dados
+            return redirect('carometro')  # Redireciona para a página do carômetro
+
+    return render(request, 'editarcurso.html', {'curso': curso})
+    
 def excluircurso(request, curso_id):
     curso = get_object_or_404(ACurso, id=curso_id)
     if request.method == 'POST':

@@ -23,18 +23,21 @@ SENAI - AVISOS
                     <p class="notice-message">{{ aviso.mensagem }}</p>
                     <small>{{ aviso.data_criacao|date:"d/m/Y H:i" }}</small> <!-- Data formatada -->
 
-                    <!-- Botões de edição e exclusão -->
+                    
                     <div class="notice-actions" style="display: flex; justify-content: center; gap: 10px; padding: 15px;">
+                        {% if is_coordenador %}
                         <button style="border-radius: 10px;"><a href="{% url 'editaraviso' aviso.id %}" class="btn btn-edit" style="color: #000;">Editar</a></button>
                         <button style="border-radius: 10px;"><a href="{% url 'excluiraviso' aviso.id %}" class="btn btn-delete" style="color: #000;">Excluir</a></button>
+                        {% endif %}
                     </div>
                 </div>
             {% endfor %}
         {% endif %}
     </div>
 
-    <!-- Botão para abrir a modal de criação de aviso -->
+    {% if is_coordenador %}
     <button id="openModalBtn">Criar Aviso</button>
+    {% endif %}
 </div>
 
 <!-- Estrutura da modal -->

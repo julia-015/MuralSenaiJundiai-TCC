@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import make_password
-
+import os
 
 
 class Login(models.Model):
@@ -65,24 +65,15 @@ class ATurma(models.Model):
 
 class AAluno(models.Model):
     nome = models.CharField(max_length=100)
-    telefone = models.CharField(max_length=100)
+    telefone = models.CharField(max_length=15)
     nome_pai = models.CharField(max_length=100)
     nome_mae = models.CharField(max_length=100)
-    turma = models.ForeignKey(ATurma, on_delete=models.CASCADE)
-    foto = models.ImageField(upload_to='fotos', blank=True, null=True)
+    turma = models.CharField(max_length=100)
     observacoes = models.TextField(blank=True, null=True)
-
-    class Meta:
-        permissions =[
-            ("can_add_alunos", "Pode adicionar alunos"),
-            ("can_edit_alunos", "Pode editar alunos"),
-            ("can_delte_alunoss", "Pode excluir alunos")
-            
-        ]
+    foto = models.ImageField(upload_to='fotos_alunos/', blank=True, null=True)  # Campo para a foto
 
     def __str__(self):
         return self.nome
-
 
 class Aviso(models.Model):
     mensagem = models.TextField("Mensagem de Aviso")
@@ -94,6 +85,13 @@ class Aviso(models.Model):
             'mensagem': self.mensagem,
             'data_criacao': self.data_criacao.isoformat(),
         }
+
+    class Meta:
+        permissions = [
+            ("can_add_aviso", "Pode adicionar avisos"),
+            ("can_edit_aviso", "Pode editar avisos"),
+            ("can_delete_aviso", "Pode excluir avisos")
+        ]
 
     def __str__(self):
         return f"Aviso - {self.data_criacao.strftime('%Y-%m-%d')}"

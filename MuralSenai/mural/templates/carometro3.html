@@ -28,7 +28,7 @@ SENAI - CARÔMETRO
   {% endif %}
 
   <div class="buttons" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
-    {% if alunos %}
+    {% if aluno %}
         {% for aluno in alunos %}
             <div class="button-group">
                 <a href="{% url 'informacoescar' aluno_id=aluno.id %}" class="button-1">
