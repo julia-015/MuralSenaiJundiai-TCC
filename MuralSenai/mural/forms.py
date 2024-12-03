@@ -20,7 +20,7 @@ class FormCadastro(forms.Form):
 class FormAluno(forms.ModelForm):
     class Meta:
         model = AAluno
-        fields = ['nome', 'telefone', 'nome_pai', 'nome_mae', 'turma', 'observacoes']
+        fields = ['nome', 'telefone', 'nome_pai', 'nome_mae', 'turma', 'foto','observacoes']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),

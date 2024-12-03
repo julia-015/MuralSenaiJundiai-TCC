@@ -1,0 +1,18 @@
+{% extends 'index.html' %}
+
+{% load static %}
+
+{% block title %}
+SENAI - CADASTRO
+{% endblock %}
+
+{% block body %}
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="foto">Escolher Foto:</label>
+    <input type="file" name="foto" id="foto">
+    <button type="submit">Enviar</button>
+</form>
+
+{%  %}

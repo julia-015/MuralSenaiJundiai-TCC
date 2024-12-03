@@ -7,34 +7,41 @@ SENAI - INFORMAÇÕES CARÔMETRO
 {% endblock %}
 
 {% block body %}
-
 <div class="container" style="padding-top: 100px;">
 
-    <!-- Seção do carômetro com informações do usuário -->
-    <section class="carometro">
-        <h1>Carômetro</h1>
-        <ul>
-            {% for aluno in alunos %}
-                <li>
-                    Nome: {{ aluno.nome }} <br>
-                    Telefone: {{ aluno.telefone }} <br>
-                    Pai: {{ aluno.nome_pai }} <br>
-                    Mãe: {{ aluno.nome_mae }} <br>
-                    Turma: {{ aluno.turma }} <br>
-                    Observações: {{ aluno.observacoes }} <br>
+  <!-- Seção do carômetro com informações do usuário -->
+  <section class="carometro">
+    <h1>Carômetro</h1>
 
-                    <!-- Adicionando os botões de editar e excluir -->
-                </li>
-            {% empty %}
-                <li>Não há alunos cadastrados.</li>
-            {% endfor %}
-        </ul>
-        <div class="extra-info">
-            <p><strong>Informações:</strong></p>
-            <!-- Adicionar informações adicionais aqui -->
-        </div>
-    </section>
+    {% if aluno.foto %}
+    <img src="{{ aluno.foto.url }}" alt="Foto do Aluno" style="width: 150px; height: 150px; border-radius: 50%;">
+    {% else %}
+    <i class="bi bi-person-circle" style="font-size: 150px;"></i>
+    {% endif %}
+
+
+    <ul>
+      {% for aluno in alunos %}
+      <li>
+        Nome: {{ aluno.nome }} <br>
+        Telefone: {{ aluno.telefone }} <br>
+        Pai: {{ aluno.nome_pai }} <br>
+        Mãe: {{ aluno.nome_mae }} <br>
+        Turma: {{ aluno.turma }} <br>
+        Observações: {{ aluno.observacoes }} <br>
+      </li>
+      {% empty %}
+      <li>Não há alunos cadastrados.</li>
+      {% endfor %}
+    </ul>
+
+    <div class="extra-info">
+      <p><strong>Informações:</strong></p>
+      <!-- Adicionar informações adicionais aqui -->
+    </div>
+  </section>
 </div>
+{% endblock %}
 
 <style>
   body {
@@ -45,12 +52,6 @@ SENAI - INFORMAÇÕES CARÔMETRO
     align-items: center;
   }
 
-  .logo {
-    font-size: 3em;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-
   .container {
     display: flex;
     justify-content: center;
@@ -59,54 +60,14 @@ SENAI - INFORMAÇÕES CARÔMETRO
     margin: 0 auto;
   }
 
-  .buttons {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 5px;
-  }
-
-  .button-group {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    flex-basis: calc(50% - 30px);
-    margin-bottom: 15px;
-  }
-
-  .button-1:hover,
-  .button-2:hover {
-    background-color: #ddd;
-  }
-
-  .button-1 svg,
-  .button-2 svg {
-    width: 40px;
-    height: 40px;
-  }
-
-  .button-title {
-    font-size: 20px;
-    margin-top: 20px;
-    font-family: 'Inter, serif', sans-serif;
-    font-weight: 300;
-  }
-
-  h1 {
-    color: var(--h1-color);
-    transition: color 0.3s ease;
-  }
-
   .edit-delete-buttons {
     display: flex;
     gap: 10px;
     margin-top: 10px;
   }
 
-  .edit-button, .delete-button {
+  .edit-button,
+  .delete-button {
     color: white;
     text-decoration: none;
     padding: 5px 10px;
@@ -129,11 +90,8 @@ SENAI - INFORMAÇÕES CARÔMETRO
 </style>
 
 {% block extra_js %}
-<!-- Linkando os arquivos CSS e JS estáticos -->
 <link rel="stylesheet" href="{% static 'css/navStyle.css' %}">
 <link rel="stylesheet" href="{% static 'dist/css/bootstrapicons-iconpicker.min.css' %}">
 <script src="{% static 'js/script.js' %}"></script>
 <script src="{% static 'dist/js/bootstrapicon-iconpicker.min.js' %}"></script>
-{% endblock %}
-
 {% endblock %}

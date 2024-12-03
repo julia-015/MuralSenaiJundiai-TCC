@@ -12,13 +12,24 @@ SENAI - ADICIONAR ALUNO
         <h1>Adicionar Aluno</h1>
         <div class="form-container">
             <div class="left-side">
-                <i class="bi bi-person-circle" style="font-size: 150px; padding-left: 50px;"></i>
+                <div>
+                    {{form.foto}} <!-- Campo oculto para foto -->
+                </div>
+                
+                <!-- Botão para adicionar foto -->
+                <button type="button" class="foto-btn" onclick="document.getElementById('id_foto').click();">
+                    <i class="bi bi-person-circle" style="font-size: 150px;"></i>
+                </button>
+                
+                <!-- Mostra a imagem se já foi escolhida -->
+                <div id="foto-preview" style="margin-top: 10px;">
+                    <img id="foto-img" src="#" alt="Prévia da foto" style="display: none; width: 150px; height: 150px; border-radius: 50%;">
+                </div>
             </div>
 
             <div class="right-side">
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
 
                     <div class="form-group" style="display: block;">
                         <div>
@@ -27,7 +38,6 @@ SENAI - ADICIONAR ALUNO
                         <div>
                             {{form.nome}}
                         </div>
-                        
                     </div>
 
                     <div class="form-group" style="display: block;">
@@ -66,11 +76,10 @@ SENAI - ADICIONAR ALUNO
                         </div>
                     </div>
             
-                    <div class="obs" >
+                    <div class="obs">
                         <div>
                             <label for="observacoes">Observações:</label>
                         </div>
-                        
                         <div>
                             {{form.observacoes}}
                         </div>
@@ -79,7 +88,6 @@ SENAI - ADICIONAR ALUNO
                     <div>
                         <button type="submit" class="btn btn-primary">Adicionar</button>
                     </div>
-
                 </form>
             </div>
         </div>
@@ -117,13 +125,13 @@ SENAI - ADICIONAR ALUNO
     }
 
     .left-side {
-    text-align: center;
-    padding-left: 30px;
-    margin-left: 30px;
-    margin-bottom: 50px;
-    margin-right: 130px;
-    margin-top: 10px;
-}
+        text-align: center;
+        padding-left: 30px;
+        margin-left: 30px;
+        margin-bottom: 50px;
+        margin-right: 130px;
+        margin-top: 10px;
+    }
 
     .form-group {
         display: flex;
@@ -132,11 +140,10 @@ SENAI - ADICIONAR ALUNO
         margin-bottom: 15px;
     }
 
-    .obs{
+    .obs {
         display: block;
         font-family: sans-serif;
         font-size: 20px;
-
     }
 
     .form-group label {
@@ -176,6 +183,44 @@ SENAI - ADICIONAR ALUNO
     .btn:hover {
         background-color: #555;
     }
+
+    /* Estilo do botão de foto */
+    .foto-btn {
+        background-color: #686868;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        width: 150px;
+        height: 150px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 30px;
+    }
+
+    /* Esconde o campo de input file */
+    input[type="file"] {
+        display: none;
+    }
 </style>
+
+<script>
+    // Função para mostrar a imagem escolhida como pré-visualização
+    document.getElementById('id_foto').addEventListener('change', function(event) {
+        var file = event.target.files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function() {
+            var fotoPreview = document.getElementById('foto-img');
+            fotoPreview.src = reader.result;
+            fotoPreview.style.display = 'inline';
+        }
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
 
 {% endblock %}

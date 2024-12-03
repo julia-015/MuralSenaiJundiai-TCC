@@ -1,5 +1,8 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('', views.homepage, name='homepage'),
@@ -19,4 +22,8 @@ urlpatterns = [
     path('criar-aviso/', views.criar_aviso_ajax, name='criar_aviso_ajax'),
     path('editaraviso/<int:aviso_id>/', views.editaraviso, name='editaraviso'),
     path('excluiraviso/<int:aviso_id>/', views.excluiraviso, name='excluiraviso'),
-]
+    path('uploadfoto/<int:aluno_id>/', views.upload_foto, name='uploadfoto'),  # Nova rota para upload de fotos
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

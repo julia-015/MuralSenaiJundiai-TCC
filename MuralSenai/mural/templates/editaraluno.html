@@ -18,33 +18,21 @@ SENAI - EDITAR ALUNO
 
 <div class="container">
     <h1>Editar Aluno</h1>
-    <form method="post">
+    <form method="POST">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" value="{{ aluno.nome }}" class="input-field">
-        </div>
-        <div class="form-group">
-            <label for="telefone">Telefone:</label>
-            <input type="text" id="telefone" name="telefone" value="{{ aluno.telefone }}" class="input-field">
-        </div>
-        <div class="form-group">
-            <label for="nome_pai">Nome Pai:</label>
-            <input type="text" id="nome_pai" name="nome_pai" value="{{ aluno.nome_pai }}" class="input-field">
-        </div>
-        <div class="form-group">
-            <label for="nome_mae">Nome Mãe:</label>
-            <input type="text" id="nome_mae" name="nome_mae" value="{{ aluno.nome_mae }}" class="input-field">
-        </div>
-        <div class="form-group">
-            <label for="turma">Turma:</label>
-            <input type="text" id="turma" name="turma" value="{{ aluno.turma }}" class="input-field">
-        </div>
-        <div class="form-group">
-            <label for="observacoes">Observações:</label>
-            <textarea id="observacoes" name="observacoes" class="input-area">{{ aluno.observacoes }}</textarea>
-        </div>
-        <button type="submit" class="btn">Editar</button>
+        <label for="nome">Nome Completo:</label>
+        <input type="text" id="nome" name="nome" value="{{ aluno.nome }}" required>
+        <label for="telefone">Telefone de Contato:</label>
+        <input type="text" id="telefone" name="telefone" value="{{ aluno.telefone }}" required>
+        <label for="nome_pai">Nome do Pai:</label>
+        <input type="text" id="nome_pai" name="nome_pai" value="{{ aluno.nome_pai }}" required>
+        <label for="nome_mae">Nome da Mãe:</label>
+        <input type="text" id="nome_mae" name="nome_mae" value="{{ aluno.nome_mae }}" required>
+        <label for="turma">Turma:</label>
+        <input type="text" id="turma" name="turma" value="{{ aluno.turma }}" required>
+        <label for="observacoes">Observações:</label>
+        <textarea id="observacoes" name="observacoes">{{ aluno.observacoes }}</textarea>
+        <button type="submit">Salvar</button>
     </form>
 </div>
 

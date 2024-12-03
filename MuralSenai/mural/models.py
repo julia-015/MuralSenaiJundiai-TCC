@@ -42,8 +42,6 @@ class ACurso(models.Model):
             ("can_edit_courses", "Pode editar cursos"),
             ("can_delete_courses", "Pode excluir cursos")
         ]
-        verbose_name = "Curso"
-        verbose_name_plural = "Cursos"
 
     def __str__(self):
         return self.curso
@@ -68,9 +66,10 @@ class ATurma(models.Model):
 class AAluno(models.Model):
     nome = models.CharField(max_length=100)
     telefone = models.CharField(max_length=100)
-    nome_pai = models.CharField(max_length=100, default='Nao informado')
-    nome_mae = models.CharField(max_length=100, default='Nao informado')
+    nome_pai = models.CharField(max_length=100)
+    nome_mae = models.CharField(max_length=100)
     turma = models.ForeignKey(ATurma, on_delete=models.CASCADE)
+    foto = models.ImageField(upload_to='fotos', blank=True, null=True)
     observacoes = models.TextField(blank=True, null=True)
 
     class Meta:
