@@ -11,83 +11,49 @@ SENAI - ADICIONAR ALUNO
     <section class="adicionar-aluno">
         <h1>Adicionar Aluno</h1>
         <div class="form-container">
-            <div class="left-side">
-                <div>
-                    {{form.foto}} <!-- Campo oculto para foto -->
-                </div>
-                
-                <!-- Botão para adicionar foto -->
-                <button type="button" class="foto-btn" onclick="document.getElementById('id_foto').click();">
-                    <i class="bi bi-person-circle" style="font-size: 150px;"></i>
-                </button>
-                
-                <!-- Mostra a imagem se já foi escolhida -->
-                <div id="foto-preview" style="margin-top: 10px;">
-                    <img id="foto-img" src="#" alt="Prévia da foto" style="display: none; width: 150px; height: 150px; border-radius: 50%;">
-                </div>
-            </div>
-
             <div class="right-side">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-
-                    <div class="form-group" style="display: block;">
-                        <div>
-                            <label for="nome">Nome Completo:</label>
-                        </div>
-                        <div>
-                            {{form.nome}}
-                        </div>
+                    <div class="form-group" style="text-align: center;">
+                        <label for="id_foto" class="foto-btn">
+                            <img id="foto-preview" src="{% static 'default-user.png' %}" alt="Foto do Aluno" 
+                                 style="width: 150px; height: 150px; border-radius: 50%; cursor: pointer;">
+                        </label>
+                        <input type="file" id="id_foto" name="foto">
+                        <p style="margin-top: 10px;">Clique na foto para selecionar</p>
                     </div>
 
-                    <div class="form-group" style="display: block;">
-                        <div>
-                            <label for="curso">Telefone de Contato:</label>
-                        </div>
-                        <div>
-                            {{form.telefone}}
-                        </div>
+                    <div class="form-group">
+                        <label for="id_nome">Nome Completo:</label>
+                        {{ form.nome }}
                     </div>
 
-                    <div class="form-group" style="display: block;">
-                        <div>
-                            <label for="cpf">Nome do Pai:</label>
-                        </div>
-                        <div>
-                            {{form.nome_pai}}
-                        </div>
+                    <div class="form-group">
+                        <label for="id_telefone">Telefone de Contato:</label>
+                        {{ form.telefone }}
                     </div>
 
-                    <div class="form-group" style="display: block;">
-                        <div>
-                            <label for="cpf">Nome da Mãe:</label>
-                        </div>
-                        <div>
-                            {{form.nome_mae}}
-                        </div>
+                    <div class="form-group">
+                        <label for="id_nome_pai">Nome do Pai:</label>
+                        {{ form.nome_pai }}
                     </div>
 
-                    <div class="form-group" style="display: block;">
-                        <div>
-                            <label for="cpf">Turma:</label>
-                        </div>
-                        <div>
-                            {{form.turma}}
-                        </div>
-                    </div>
-            
-                    <div class="obs">
-                        <div>
-                            <label for="observacoes">Observações:</label>
-                        </div>
-                        <div>
-                            {{form.observacoes}}
-                        </div>
+                    <div class="form-group">
+                        <label for="id_nome_mae">Nome da Mãe:</label>
+                        {{ form.nome_mae }}
                     </div>
 
-                    <div>
-                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                    <div class="form-group">
+                        <label for="id_turma">Turma:</label>
+                        {{ form.turma }}
                     </div>
+
+                    <div class="form-group">
+                        <label for="id_observacoes">Observações:</label>
+                        {{ form.observacoes }}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Adicionar</button>
                 </form>
             </div>
         </div>
@@ -117,52 +83,32 @@ SENAI - ADICIONAR ALUNO
     }
 
     .form-container {
-        display: inline-block;
+        display: flex;
         justify-content: center;
         align-items: center;
         border-radius: 10px;
         padding: 20px;
     }
 
-    .left-side {
-        text-align: center;
-        padding-left: 30px;
-        margin-left: 30px;
-        margin-bottom: 50px;
-        margin-right: 130px;
-        margin-top: 10px;
-    }
-
     .form-group {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .obs {
-        display: block;
-        font-family: sans-serif;
-        font-size: 20px;
+        margin-bottom: 20px;
+        text-align: left;
     }
 
     .form-group label {
         font-size: 18px;
-        width: 100px;
-        margin-right: 10px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
     }
 
-    .form-control {
-        background-color: #bcbcbc80;
-        color: white;
-        border: 1px solid #686868;
-        padding: 7px;
-        border: none;
+    .form-group input {
+        width: 100%;
+        padding: 10px;
         border-radius: 5px;
-        margin-bottom: 15px;
-        width: 400px;
-        box-sizing: border-box;
-        height: 35px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        margin-top: 5px;
     }
 
     .btn {
@@ -173,9 +119,7 @@ SENAI - ADICIONAR ALUNO
         font-size: 18px;
         transition: background-color 0.3s;
         border-radius: 5px;
-        width: 200px;
-        margin-top: 15px;
-        margin-left: 90px;
+        padding: 10px 20px;
         font-family: 'Inria Serif', serif;
         font-weight: bold;
     }
@@ -184,38 +128,33 @@ SENAI - ADICIONAR ALUNO
         background-color: #555;
     }
 
-    /* Estilo do botão de foto */
     .foto-btn {
-        background-color: #686868;
-        color: white;
-        border: none;
-        border-radius: 50%;
+        display: inline-block;
+        position: relative;
         cursor: pointer;
-        width: 150px;
-        height: 150px;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 30px;
+        overflow: hidden;
     }
 
-    /* Esconde o campo de input file */
+    #foto-preview {
+        display: block;
+        margin: auto;
+        object-fit: cover;
+    }
+
     input[type="file"] {
         display: none;
     }
 </style>
 
 <script>
-    // Função para mostrar a imagem escolhida como pré-visualização
-    document.getElementById('id_foto').addEventListener('change', function(event) {
+    document.getElementById('id_foto').addEventListener('change', function (event) {
         var file = event.target.files[0];
         var reader = new FileReader();
 
-        reader.onloadend = function() {
-            var fotoPreview = document.getElementById('foto-img');
-            fotoPreview.src = reader.result;
-            fotoPreview.style.display = 'inline';
-        }
+        reader.onload = function (e) {
+            var fotoPreview = document.getElementById('foto-preview');
+            fotoPreview.src = e.target.result;
+        };
 
         if (file) {
             reader.readAsDataURL(file);

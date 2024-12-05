@@ -3,141 +3,90 @@
 {% load static %}
 
 {% block title %}
-SENAI - EDITAR TURMA
+Editar Turma
 {% endblock %}
 
 {% block body %}
+<!-- Modal de edição -->
+<div id="editModal" class="modal" style="display: flex; justify-content: center; align-items: center; margin-top: 200px;">
+    <div class="modal-content" style="background-color: rgb(255, 85, 85); padding: 50px; border-radius: 20px;">
+        <h1 style="margin-top: 0px; margin-bottom: 30px;">Editar Turma</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="turma">Nome da Turma:</label>
+                <input type="text" id="turma" name="turma" value="{{ turma.turma }}" class="input-field" required>
+            </div>
+        
+            <div class="form-group">
+                <label for="periodo">Período:</label>
+                <input type="text" id="periodo" name="periodo" value="{{ turma.periodo }}" class="input-field" required>
+            </div>
+        
+            <button type="submit">Salvar</button>
 
-<div class="header">
-    <div class="logo">SENAI</div>
-    <div class="user-controls">
-        <a href="#" class="link">Cadastro</a> | <a href="#" class="link">Login</a>
-        <span class="user-icon">👤</span>
+            <!-- Exibir mensagens de erro -->
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        </form>
     </div>
 </div>
 
-<div class="container">
-    <h1>Editar Turma</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <label for="nome">Nome da Turma:</label>
-        <input type="text" id="nome" name="nome" value="{{ turma.nome }}" required>
-        <label for="periodo">Período:</label>
-        <input type="text" id="periodo" name="periodo" value="{{ turma.periodo }}" required>
-        <label for="curso">Curso:</label>
-        <input type="text" id="curso" name="curso" value="{{ turma.curso }}" required>
-        <button type="submit">Salvar</button>
-    </form>
-</div>
-
 <style>
-    /* Fundo inspirado no Carômetro */
     body {
-        background: linear-gradient(135deg, #1a1a1a, #333);
+        background-image: var(--background-image);
         color: white;
-        font-family: Arial, sans-serif;
+        font-family: sans-serif;
         margin: 0;
-        padding: 0;
-        min-height: 100vh;
         display: flex;
-        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        align-items: center;
     }
 
-    /* Cabeçalho */
-    .header {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: black;
-        border-bottom: 2px solid white;
-    }
-
-    .logo {
-        font-size: 24px;
+    h1 {
+        color: var(--h1-color);
+        transition: color 0.3s ease;
+        font-family: 'Inria Serif', serif;
         font-weight: bold;
-        color: red;
-    }
-
-    .user-controls .link {
-        color: white;
-        text-decoration: none;
-        margin: 0 5px;
-    }
-
-    .user-icon {
-        font-size: 20px;
-        margin-left: 10px;
-    }
-
-    /* Conteúdo */
-    .container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        background: rgba(40, 40, 40, 0.9); /* Fundo semitransparente */
-        border: 1px solid white;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
-    }
-
-    .container h1 { 
-        text-align: center;
-        font-size: 28px;
-        margin-bottom: 20px;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 15px;
-    }
-
-    .form-group label {
-        margin-bottom: 5px;
-        font-size: 16px;
     }
 
     .input-field {
         padding: 10px;
-        border: 1px solid white;
         border-radius: 5px;
-        background-color: black;
-        color: white;
-        font-size: 14px;
-    }
-
-    .input-area {
-        height: 80px;
-        resize: none;
-        padding: 10px;
-        border: 1px solid white;
-        border-radius: 5px;
-        background-color: black;
-        color: white;
-        font-size: 14px;
-    }
-
-    .btn {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        font-weight: bold;
         border: none;
-        border-radius: 5px;
-        background-color: red;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
+        background-color: white;
+        color: black;
+        width: calc(100% - 20px); /* Ajustando largura */
     }
 
-    .btn:hover {
-        background-color: darkred;
-        transform: scale(1.05);
+    button {
+        margin-top: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        background-color: green; /* Cor do botão */
+        color: white;
     }
 </style>
+
+{% block extra_js %}
+<!-- Linkando os arquivos CSS e JS estáticos -->
+<link rel="stylesheet" href="{% static 'css/navStyle.css' %}">
+<link rel="stylesheet" href="{% static 'dist/css/bootstrapicons-iconpicker.min.css' %}">
+<script src="{% static 'js/script.js' %}"></script>
+<script src="{% static 'dist/js/bootstrapicon-iconpicker.min.js' %}"></script>
+{% endblock %}
 
 {% endblock %}

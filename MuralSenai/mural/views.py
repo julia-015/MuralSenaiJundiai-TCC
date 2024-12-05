@@ -1,21 +1,16 @@
 
 # views.py
-from django.shortcuts import render, HttpResponse, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login as auth_login
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib import messages
 from .forms import FormAluno, FormCadastro, FormLogin, FormCurso, FormTurma
-from .models import AAluno, Cadastro, ACurso, ATurma, Login, Aviso
+from .models import AAluno, Cadastro, ACurso, ATurma, Aviso
 from django.http import JsonResponse
-from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.contrib.auth.decorators import user_passes_test
+from django.db import connection
 
 def homepage(request):
     if request.method == "POST":
@@ -116,13 +111,21 @@ def carometro2(request, curso_id):
 
 @login_required
 def carometro3(request, turma_id):
+    # Filtra os alunos pela turma
     alunos = AAluno.objects.filter(turma=turma_id)
-
+    
+    # Verifica se o usuário é coordenador
     is_coordenador = request.user.groups.filter(name='Coordenador').exists()
 
-    context = {'alunos': alunos}
-    context["is_coordenador"] = is_coordenador
+    # Passa os dados para o contexto
+    context = {
+        'alunos': alunos,
+        'is_coordenador': is_coordenador
+    }
+
+    # Retorna o template com o contexto
     return render(request, 'carometro3.html', context)
+
 
 def informacoescar(request, aluno_id):
     alunos = AAluno.objects.filter(id=aluno_id)
@@ -150,30 +153,40 @@ def adicionarcurso(request):
     else:
         form = FormCurso()
     context["form"] = form
-    return render(request, 'adicionarcurso.html', context)
+    return render(request, 'adicionarcurso.html', context) 
 
+# Edição e exclusão de Cursos
 def editarcurso(request, curso_id):
     curso = get_object_or_404(ACurso, id=curso_id)
 
-    if request.method == 'POST':
-        form = FormCurso(request.POST, instance=curso)  # Preenche o formulário com os dados existentes
-        
-        if form.is_valid():
-            form.save()  # Salva as alterações no banco de dados
-            messages.success(request, "Curso editado com sucesso!")  # Mensagem de sucesso
-            return redirect('carometro')  # Redireciona para a página de cursos após salvar        
-    else:
-        form = FormCurso(instance=curso)  # Preenche o formulário com os dados existentes
-    return render(request, 'editarcurso.html', {'form': form, 'curso': curso})  
+    if request.method == 'POST':  # Verifica se o método é POST
+        novo_nome = request.POST.get('curso')  # Captura o novo nome do campo 'curso'
+        if novo_nome:  # Verifica se o novo nome foi enviado
+            curso.curso = novo_nome
+            curso.save()  # Salva as alterações no banco de dados
+            return redirect('carometro')  # Redireciona para a página do carômetro
+
+    return render(request, 'editarcurso.html', {'curso': curso})
 
 def excluircurso(request, curso_id):
     curso = get_object_or_404(ACurso, id=curso_id)
-
     if request.method == 'POST':
-        curso.delete()
-        return JsonResponse({'status': 'sucesso', 'mensagem': 'Curso excluído com sucesso!'})
-    return JsonResponse({'status': 'erro', 'mensagem': 'Método não permitido'}, status=405)
+        # Obtenha as turmas associadas ao curso
+        turmas = ATurma.objects.filter(curso=curso)
+        for turma in turmas:
+            # Excluir alunos manualmente usando SQL
+            with connection.cursor() as cursor:
+                cursor.execute("DELETE FROM mural_aaluno WHERE turma = %s", [turma.turma])
+            
+            # Exclua a turma
+            turma.delete()
 
+        # Exclua o curso após excluir as dependências
+        curso.delete()
+        return redirect('carometro')
+
+    return render(request, 'carometro.html', {'curso': curso})
+    
 def adicionarturma(request):
     context = {}
 
@@ -202,29 +215,40 @@ def adicionarturma(request):
 def editarturma(request, turma_id):
     turma = get_object_or_404(ATurma, id=turma_id)
 
-    if request.method == 'POST':
-        form = FormTurma(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Turma editado com sucesso!")  # Mensagem de sucesso
-            return redirect('carometro')  # Redireciona para a página de cursos após salvar
-    else:
-        form = FormTurma()
+    if request.method == 'POST':  # Verifica se o método é POST
+        novo_nome = request.POST.get('turma')  # Nome da turma
+        novo_periodo = request.POST.get('periodo')  # Período da turma
 
-    return render(request, 'editarturma.html', {'form': form, 'turma': turma})
+        # Atualiza a turma com os novos valores
+        if novo_nome:
+            turma.turma = novo_nome
+        if novo_periodo:
+            turma.periodo = novo_periodo
+
+        turma.save()  # Salva as alterações no banco de dados
+        return redirect('carometro')  # Redireciona para a página do carômetro
+
+    return render(request, 'editarturma.html', {'turma': turma, 'cursos': ACurso.objects.all()})
 
 def excluirturma(request, turma_id):
     turma = get_object_or_404(ATurma, id=turma_id)
     if request.method == 'POST':
-        turma.delete()
-        return JsonResponse({'status': 'sucesso', 'mensagem': 'Turma excluída com sucesso!'})
-    return JsonResponse({'status': 'erro', 'mensagem': 'Método não permitido'}, status=405)
+        # Exclua todas as turmas associadas ao curso
+        alunos = AAluno.objects.filter(turma=turma)
+        for aluno in alunos:
+            # Exclua todos os alunos associados à turma
+            aluno.delete()
+        
+        # Após excluir dependências, exclua o curso
+        turma.delete()        
+        return redirect('inicio')
+    return render(request, 'inicio.html')
 
 def adicionaraluno(request):
     context = {}
 
     if request.method == "POST":
-        form = FormAluno(request.POST, request.FILES)  # Incluindo request.FILES para tratar uploads de arquivos
+        form = FormAluno(request.POST, request.FILES)  # Inclusão de request.FILES
         if form.is_valid():
             var_nome = form.cleaned_data['nome']
             var_telefone = form.cleaned_data['telefone']
@@ -232,7 +256,7 @@ def adicionaraluno(request):
             var_nome_mae = form.cleaned_data['nome_mae']
             var_turma = form.cleaned_data['turma']
             var_observacoes = form.cleaned_data.get('observacoes', '')
-            var_foto = form.cleaned_data.get('foto')  # Captura o campo foto do formulário
+            var_foto = form.cleaned_data.get('foto')
 
             try:
                 if AAluno.objects.filter(nome=var_nome, turma=var_turma).exists():
@@ -245,22 +269,48 @@ def adicionaraluno(request):
                         nome_mae=var_nome_mae,
                         turma=var_turma,
                         observacoes=var_observacoes,
-                        foto=var_foto  # Adicionando a foto ao aluno
+                        foto=var_foto  # Salvando a foto do aluno
                     )
-                    user_aluno.save()  # Salvando o aluno no banco de dados
+                    user_aluno.save()  # Salvando no banco de dados
                     context["success"] = "Aluno adicionado com sucesso!"
-                    return redirect('carometro')  # Redireciona para a página do carômetro
+                    return redirect('carometro')  # Redireciona após o sucesso
             except Exception as e:
                 context["error"] = f"Ocorreu um erro: {str(e)}"
         context["form"] = form
     else:
-        form = FormAluno()  # Instanciando o formulário
+        form = FormAluno()
         context["form"] = form
-    
+
     return render(request, 'adicionaraluno.html', context)
 
+def editaraluno(request, aluno_id):
+    aluno = get_object_or_404(AAluno, id=aluno_id)
 
-from django.core.files.storage import FileSystemStorage
+    if request.method == 'POST':
+        # Processa os dados do formulário
+        aluno.nome = request.POST.get('nome')
+        aluno.telefone = request.POST.get('telefone')
+        aluno.nome_pai = request.POST.get('nome_pai')
+        aluno.nome_mae = request.POST.get('nome_mae')
+        aluno.observacoes = request.POST.get('observacoes')
+
+        # Se houver uma foto enviada, atualiza a foto do aluno
+        if 'foto' in request.FILES:
+            aluno.foto = request.FILES['foto']
+
+        aluno.save()  # Salva as alterações no banco de dados
+        return redirect('carometro')  # Redireciona para a página do carômetro
+
+    return render(request, 'editaraluno.html', {'aluno': aluno})
+
+def excluiraluno(request, aluno_id):
+    aluno = get_object_or_404(AAluno, id=aluno_id)
+    if request.method == 'POST':
+        aluno.delete()
+        return redirect('carometro')
+    return render(request, 'carometro.html')
+
+
 
 def upload_foto(request, aluno_id):
     aluno = get_object_or_404(AAluno, id=aluno_id)  # Busca o aluno pelo ID
@@ -274,28 +324,6 @@ def upload_foto(request, aluno_id):
         return JsonResponse({'status': 'erro', 'mensagem': 'Nenhuma foto enviada.'}, status=400)
 
     return render(request, 'upload_foto.html', {'aluno': aluno})
-
-def editaraluno(request, aluno_id):
-    aluno = get_object_or_404(AAluno, id=aluno_id)
-
-    if request.method == 'POST':
-        form = FormAluno(request.POST, instance=aluno)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Aluno editado com sucesso!")
-            return redirect('carometro')
-    else:
-        form = FormAluno()
-
-    return render(request, 'editaraluno.html', {'form': form, 'aluno': aluno})
-
-def excluiraluno(request, aluno_id):
-    aluno = get_object_or_404(ATurma, id=aluno_id)
-    if request.method == 'POST':
-        aluno.delete()
-        return JsonResponse({'status': 'sucesso', 'mensagem': 'Turma excluída com sucesso!'})
-    return JsonResponse({'status': 'erro', 'mensagem': 'Método não permitido'}, status=405)
-
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
@@ -331,13 +359,14 @@ def muralaviso(request):
                 data_criacao__gte=now() - timedelta(seconds=5)
             ).exists()
             if similar_aviso:
-                return JsonResponse({'status': 'erro', 'mensagem': 'Aviso duplicado detectado'})
+                return JsonResponse({'status': 'erro', 'mensagem': 'Aviso publicado com sucesso!'})
 
             aviso = Aviso.objects.create(mensagem=mensagem)
             return JsonResponse({
                 'status': 'sucesso',
                 'mensagem': aviso.mensagem,
                 'data_criacao': aviso.data_criacao.strftime("%d/%m/%Y %H:%M")
+
             })
 
     avisos = Aviso.objects.all()
@@ -395,62 +424,4 @@ def criar_aviso_ajax(request):
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 
-# Edição e exclusão de Turmas
-def editarturma(request, turma_id):
-    turma = get_object_or_404(ATurma, id=turma_id)
-    if request.method == 'POST':
-        turma.nome = request.POST.get('nome')
-        turma.periodo = request.POST.get('periodo')
-        turma.curso = request.POST.get('curso')  # Certifique-se de que curso é uma FK ou CharField
-        turma.save()
-        return redirect('carometro2')  # Define uma página para listar as turmas
-    return render(request, 'editarturma.html', {'turma': turma})
 
-def excluirturma(request, turma_id):
-    turma = get_object_or_404(ATurma, id=turma_id)
-    if request.method == 'POST':
-        turma.delete()
-        return redirect('carometro2')
-    return render(request, 'excluirturma.html', {'turma': turma})
-
-# Edição e exclusão de Cursos
-def editarcurso(request, curso_id):
-    curso = get_object_or_404(ACurso, id=curso_id)
-
-    if request.method == 'POST':  # Verifica se o método é POST
-        novo_nome = request.POST.get('curso')  # Captura o novo nome do campo 'curso'
-        if novo_nome:  # Verifica se o novo nome foi enviado
-            curso.curso = novo_nome
-            curso.save()  # Salva as alterações no banco de dados
-            return redirect('carometro')  # Redireciona para a página do carômetro
-
-    return render(request, 'editarcurso.html', {'curso': curso})
-    
-def excluircurso(request, curso_id):
-    curso = get_object_or_404(ACurso, id=curso_id)
-    if request.method == 'POST':
-        curso.delete()
-        return redirect('carometro')
-    return render(request, 'excluircurso.html', {'curso': curso})
-
-# Edição e exclusão de Alunos
-def editaraluno(request, aluno_id):
-    aluno = get_object_or_404(AAluno, id=aluno_id)
-    if request.method == 'POST':
-        aluno.nome = request.POST.get('nome')
-        aluno.telefone = request.POST.get('telefone')
-        aluno.nome_pai = request.POST.get('nome_pai')
-        aluno.nome_mae = request.POST.get('nome_mae')
-        aluno.turma = request.POST.get('turma')  # Certifique-se de que turma é uma FK ou CharField
-        aluno.observacoes = request.POST.get('observacoes')
-        aluno.save()
-        return redirect('carometro3')  # Define uma página para listar os alunos
-    return render(request, 'editaraluno.html', {'aluno': aluno})
-
-
-def excluiraluno(request, aluno_id):
-    aluno = get_object_or_404(AAluno, id=aluno_id)
-    if request.method == 'POST':
-        aluno.delete()
-        return redirect('carometro3')
-    return render(request, 'excluiraluno.html', {'aluno': aluno})

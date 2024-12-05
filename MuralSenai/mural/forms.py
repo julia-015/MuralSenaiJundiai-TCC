@@ -20,16 +20,20 @@ class FormCadastro(forms.Form):
 class FormAluno(forms.ModelForm):
     class Meta:
         model = AAluno
-        fields = ['nome', 'telefone', 'nome_pai', 'nome_mae', 'turma', 'foto','observacoes']
+        fields = ['nome', 'telefone', 'nome_pai', 'nome_mae', 'turma', 'foto', 'observacoes']
         widgets = {
             'nome': forms.TextInput(attrs={'class': 'form-control'}),
             'telefone': forms.TextInput(attrs={'class': 'form-control'}),
             'nome_pai': forms.TextInput(attrs={'class': 'form-control'}),
             'nome_mae': forms.TextInput(attrs={'class': 'form-control'}),
             'turma': forms.Select(attrs={'class': 'form-control'}),
-            'fotos':forms.Select(attrs={'class': 'form-control'}),
+            'foto': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'observacoes': forms.Textarea(attrs={'class': 'form-control'}),
         }
+
+    turma = forms.ModelChoiceField(queryset=ATurma.objects.all(), empty_label="Selecione a Turma", widget=forms.Select(attrs={'class': 'form-control'}))
+
+    
 class FormCurso(forms.Form):
     curso = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     class Meta:

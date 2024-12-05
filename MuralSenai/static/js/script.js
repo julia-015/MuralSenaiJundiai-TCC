@@ -87,7 +87,8 @@ form.addEventListener("submit", (event) => {
             if (data.status === "sucesso") {
                 loadNotices();  // Recarrega os avisos após criar um novo
                 form.reset();   // Limpa o formulário
-                modal.style.display = "none"; // Fecha a modal
+                modal.style.display = "none";
+                window.location.reload() // Fecha a modal
             } else {
                 alert("Erro ao criar aviso: " + data.mensagem);
             }

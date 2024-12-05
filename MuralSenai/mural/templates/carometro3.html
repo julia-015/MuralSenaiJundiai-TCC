@@ -8,49 +8,50 @@ SENAI - CARÔMETRO
 
 {% block body %}
 <div class="container" style="padding-top: 80px; display: block;">
-
   <div style="justify-content: center; align-items: center; margin-top: 230px; position: fixed;">
-    <a href="http://127.0.0.1:8000/" style="color: rgb(183, 33, 33); font-size: 50px;">
+    <a href="http://127.0.0.1:8000/carometro" style="color: rgb(183, 33, 33); font-size: 50px;">
       <i class="bi bi-arrow-left-circle-fill"></i>
     </a>
   </div>
-  
+
   {% if is_coordenador %}
-  <div class="buttons-adicionais" style="background-color: #d9d9d9; width: 110px; display: flex; align-items: center; justify-content: space-between; border-radius: 15px; padding-left: 20px; padding-right: 20px; margin-top: 20px; margin-left: 1080px; height: 50px; margin-bottom: 10px;">
+  <div class="buttons-adicionais"
+    style="background-color: #d9d9d9; width: 20px; display: flex; align-items: center; border-radius: 15px; padding-left: 20px; padding-right: 20px; margin-top: 20px; margin-left: 1200px; height: 50px; margin-bottom: 10px;">
     <a href="{% url 'adicionaraluno' %}">
       <i class="bi bi-person-plus" style="font-size: 20px;"></i>
-    </a>
-    <p style="font-size: 20px;">|</p>
-    <a href="#">
-      <i class="bi bi-trash3" style="font-size: 20px;"></i>
     </a>
   </div>
   {% endif %}
 
   <div class="buttons" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
-    {% if aluno %}
-        {% for aluno in alunos %}
-            <div class="button-group">
-                <a href="{% url 'informacoescar' aluno_id=aluno.id %}" class="button-1">
-                    <i class="bi bi-inboxes"></i>
-                </a>
-                <h1 class="button-title">{{ aluno.nome }}</h1> <!-- Corrigido para mostrar o nome do aluno -->
-            </div>
+    {% if alunos %}
+    {% for aluno in alunos %}
+    <div class="button-group">
+      <a href="{% url 'informacoescar' aluno_id=aluno.id %}" class="button-1">
+        <i class="bi bi-inboxes"></i>
+      </a>
+      <h1 class="button-title">{{ aluno.nome }}</h1>
 
-            <div class="edit-delete-buttons">
-              {% if is_coordenador %}
-              <a href="{% url 'editaraluno' aluno.id %}" class="edit-button">Editar</a> <!-- Link para editar -->
-              <a href="#" class="delete-button" data-id="{{ aluno.id }}">Excluir</a> <!-- Link para excluir -->
-              {% endif %}
-            </div>
-
-        {% endfor %}
+      <div class="edit-delete-buttons">
+        {% if is_coordenador %}
+        <button><a href="{% url 'editaraluno' aluno.id %}" class="edit-button">Editar</a></button>
+        <form method="POST" action="{% url 'excluiraluno' aluno.id %}">
+          {% csrf_token %}
+          <button type="submit" onclick="return confirm('Tem certeza de que deseja excluir este aluno?')">
+            Excluir
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
     {% else %}
-        <p>Nenhum aluno encontrado.</p>
+    <p>Nenhum aluno encontrado.</p>
     {% endif %}
+  </div>
 </div>
 
-</div>
+<script src="{% static 'js/script.js' %}"></script>
 
 <style>
   body {
@@ -70,7 +71,7 @@ SENAI - CARÔMETRO
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: auto; /* Ajuste para permitir a altura automática */
     margin: 0 auto;
   }
 
@@ -92,15 +93,8 @@ SENAI - CARÔMETRO
     margin-bottom: 15px;
   }
 
-  .button-1:hover,
-  .button-2:hover {
+  .button-1:hover {
     background-color: #ddd;
-  }
-
-  .button-1 svg,
-  .button-2 svg {
-    width: 40px;
-    height: 40px;
   }
 
   .button-title {
@@ -114,35 +108,41 @@ SENAI - CARÔMETRO
     color: var(--h1-color);
     transition: color 0.3s ease;
   }
+
+  .edit-delete-buttons {
+      display: flex;
+      flex-direction: column; /* Alinha os botões verticalmente */
+      align-items: center; /* Centraliza os botões horizontalmente */
+      gap: 10px; /* Espaçamento entre os botões */
+      margin-top:10px; /* Margem acima dos botões */
+   }
 </style>
 
 <script>
-  // Lógica JavaScript para excluir alunos
-  document.querySelectorAll('.delete-button').forEach(button => {
-      button.addEventListener('click', function(e) {
-          e.preventDefault(); // Impede o comportamento padrão do link
-          const alunoId = this.getAttribute('data-id'); // Obtém o ID do aluno
-  
-          if (confirm('Tem certeza que deseja excluir este aluno?')) {
-              fetch(`/excluiraluno/${alunoId}/`, {
-                  method: 'POST',
-                  headers: {
-                      'X-CSRFToken': '{{ csrf_token }}', // Adicionando o token CSRF para segurança
-                  }
-              })
-              .then(response => response.json())
-              .then(data => {
-                  if (data.status === 'sucesso') {
-                      alert(data.mensagem); // Mensagem de sucesso
-                      location.reload(); // Recarrega a página para atualizar a lista de alunos
-                  } else {
-                      alert(data.mensagem); // Mensagem de erro
-                  }
-              })
-              .catch(error => console.error('Erro:', error));
-          }
-      });
-  });
-  </script>
-  
-  {% endblock %}
+document.querySelectorAll('.delete-button').forEach(button => {
+   button.addEventListener('click', function (e) {
+     e.preventDefault(); // Impede o comportamento padrão do link
+     const alunoId = this.getAttribute('data-id'); // Obtém o ID do aluno
+
+     if (confirm('Tem certeza que deseja excluir este aluno?')) {
+       fetch(`/excluiraluno/${alunoId}/`, {
+         method: 'POST',
+         headers: {
+           'X-CSRFToken': '{{ csrf_token }}', // Adicionando o token CSRF para segurança
+         }
+       })
+       .then(response => response.json())
+       .then(data => {
+         if (data.status === 'sucesso') {
+           alert(data.mensagem); // Mensagem de sucesso
+           location.reload(); // Recarrega a página para atualizar a lista de alunos
+         } else {
+           alert(data.mensagem); // Mensagem de erro
+         }
+       })
+       .catch(error => console.error('Erro:', error));
+     }
+   });
+});
+</script>
+{% endblock %}

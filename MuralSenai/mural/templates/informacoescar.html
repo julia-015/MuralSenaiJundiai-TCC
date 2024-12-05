@@ -13,32 +13,28 @@ SENAI - INFORMAÇÕES CARÔMETRO
   <section class="carometro">
     <h1>Carômetro</h1>
 
-    {% if aluno.foto %}
-    <img src="{{ aluno.foto.url }}" alt="Foto do Aluno" style="width: 150px; height: 150px; border-radius: 50%;">
-    {% else %}
-    <i class="bi bi-person-circle" style="font-size: 150px;"></i>
-    {% endif %}
+    
 
 
-    <ul>
+    <ul style="list-style: none; padding: 0;">
       {% for aluno in alunos %}
-      <li>
-        Nome: {{ aluno.nome }} <br>
-        Telefone: {{ aluno.telefone }} <br>
-        Pai: {{ aluno.nome_pai }} <br>
-        Mãe: {{ aluno.nome_mae }} <br>
-        Turma: {{ aluno.turma }} <br>
-        Observações: {{ aluno.observacoes }} <br>
-      </li>
+        <li style="margin-bottom: 20px; padding-bottom: 10px;">
+          {% if aluno.foto %}
+            <img src="{{ aluno.foto.url }}" alt="Foto do Aluno" style="width: 150px; height: 150px; border-radius: 50%; display: block; margin-bottom: 10px;">
+          {% else %}
+            <i class="bi bi-person-circle" style="font-size: 150px; display: block; margin-bottom: 10px;"></i>
+          {% endif %}
+          <strong>Nome:</strong> {{ aluno.nome }} <br>
+          <strong>Telefone:</strong> {{ aluno.telefone }} <br>
+          <strong>Pai:</strong> {{ aluno.nome_pai }} <br>
+          <strong>Mãe:</strong> {{ aluno.nome_mae }} <br>
+          <strong>Turma:</strong> {{ aluno.turma }} <br>
+          <strong>Observações:</strong> {{ aluno.observacoes }} <br>
+        </li>
       {% empty %}
-      <li>Não há alunos cadastrados.</li>
+        <li>Não há alunos cadastrados.</li>
       {% endfor %}
     </ul>
-
-    <div class="extra-info">
-      <p><strong>Informações:</strong></p>
-      <!-- Adicionar informações adicionais aqui -->
-    </div>
   </section>
 </div>
 {% endblock %}
@@ -49,31 +45,83 @@ SENAI - INFORMAÇÕES CARÔMETRO
     color: white;
     font-family: sans-serif;
     margin: 0;
+    display: flex;
+    justify-content: center;
     align-items: center;
+    text-align: center;
   }
 
   .container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0 auto;
+    width: 90%;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
   }
 
+  h1 {
+    font-size: 3em; /* Tamanho maior para o título */
+    margin-bottom: 30px;
+    color: #ffcc00;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  li {
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-size: 1.5em; /* Aumenta o tamanho da letra */
+    color: white;
+    text-align: left; /* Texto alinhado à esquerda */
+  }
+
+  li img {
+    display: block;
+    margin: 0 auto 20px; /* Centraliza a imagem */
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .extra-info {
+    margin-top: 30px;
+    font-size: 1.2em; /* Ajusta o tamanho do texto das informações extras */
+    color: #ddd;
+  }
+
+  /* Botões de edição e exclusão */
   .edit-delete-buttons {
     display: flex;
-    gap: 10px;
-    margin-top: 10px;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
   }
 
   .edit-button,
   .delete-button {
     color: white;
     text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    background-color: #007bff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 1.2em;
+    font-weight: bold;
     transition: background-color 0.3s ease;
+  }
+
+  .edit-button {
+    background-color: #007bff;
   }
 
   .delete-button {
@@ -88,6 +136,8 @@ SENAI - INFORMAÇÕES CARÔMETRO
     background-color: #c82333;
   }
 </style>
+
+
 
 {% block extra_js %}
 <link rel="stylesheet" href="{% static 'css/navStyle.css' %}">

@@ -60,7 +60,7 @@ class ATurma(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.turma} ({self.curso})"
+        return f"{self.turma}"
 
 
 class AAluno(models.Model):
@@ -75,22 +75,21 @@ class AAluno(models.Model):
     def __str__(self):
         return self.nome
 
+from django.db import models
+from django.utils.timezone import now
+from datetime import timedelta
+
 class Aviso(models.Model):
     mensagem = models.TextField("Mensagem de Aviso")
     data_criacao = models.DateTimeField(auto_now_add=True)
 
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'mensagem': self.mensagem,
-            'data_criacao': self.data_criacao.isoformat(),
-        }
-
     class Meta:
-        permissions = [
-            ("can_add_aviso", "Pode adicionar avisos"),
-            ("can_edit_aviso", "Pode editar avisos"),
-            ("can_delete_aviso", "Pode excluir avisos")
+        constraints = [
+            models.UniqueConstraint(
+                fields=['mensagem'],
+                condition=models.Q(data_criacao__gte=now() - timedelta(seconds=5)),
+                name='unique_recent_mensagem'
+            )
         ]
 
     def __str__(self):

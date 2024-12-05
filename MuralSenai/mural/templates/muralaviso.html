@@ -7,94 +7,103 @@ SENAI - AVISOS
 {% endblock %}
 
 {% block body %}
-<div class="container" style="margin-top: 150px;">
-    <h1 style="color: #fff;">Mural de Avisos</h1>
-    <div style="justify-content: center; align-items: center; margin-top: 280px; position: fixed; font-size: 50px;">
-        <a href="http://127.0.0.1:8000/inicio" style="color: rgb(183, 33, 33); ">
-            <i class="bi bi-arrow-left-circle-fill"></i>
-        </a>
-    </div>
+<div class="caixa">
 
-    <!-- Exibe todos os avisos em uma lista -->
-    <div class="notice-list" id="noticeList">
-        {% if avisos %}
+    <div class="container" style="margin-top: 150px; width: 500px;">
+        <h1 style="color: #fff;">Mural de Avisos</h1>
+
+        <!-- Ajustar a posição da seta para a esquerda e centralizada verticalmente -->
+        <div style="position: fixed; top: 50%; left: 20px; transform: translateY(-50%);">
+            <a href="http://127.0.0.1:8000/inicio" style="color: rgb(183, 33, 33); font-size: 50px;">
+                <i class="bi bi-arrow-left-circle-fill"></i>
+            </a>
+        </div>
+
+        <!-- Exibe todos os avisos em uma lista -->
+        <div class="notice-list" id="noticeList">
+            {% if avisos %}
             {% for aviso in avisos %}
-                <div class="notice-item">
-                    <p class="notice-message">{{ aviso.mensagem }}</p>
-                    <small>{{ aviso.data_criacao|date:"d/m/Y H:i" }}</small> <!-- Data formatada -->
-
-                    
-                    <div class="notice-actions" style="display: flex; justify-content: center; gap: 10px; padding: 15px;">
-                        {% if is_coordenador %}
-                        <button style="border-radius: 10px;"><a href="{% url 'editaraviso' aviso.id %}" class="btn btn-edit" style="color: #000;">Editar</a></button>
-                        <button style="border-radius: 10px;"><a href="{% url 'excluiraviso' aviso.id %}" class="btn btn-delete" style="color: #000;">Excluir</a></button>
-                        {% endif %}
-                    </div>
+            <div class="notice-item">
+                <p class="notice-message">{{ aviso.mensagem }}</p>
+                <small>{{ aviso.data_criacao|date:"d/m/Y H:i" }}</small> <!-- Data formatada -->
+                <div class="notice-actions" style="display: flex; justify-content: center; gap: 10px; padding: 15px;">
+                    {% if is_coordenador %}
+                    <button style="border-radius: 10px;"><a href="{% url 'editaraviso' aviso.id %}" class="btn btn-edit"
+                            style="color: #000;">Editar</a></button>
+                    <button style="border-radius: 10px;"><a href="{% url 'excluiraviso' aviso.id %}"
+                            class="btn btn-delete" style="color: #000;">Excluir</a></button>
+                    {% endif %}
                 </div>
+            </div>
             {% endfor %}
+            {% endif %}
+        </div>
+
+        {% if is_coordenador %}
+        <button id="openModalBtn">Criar Aviso</button>
         {% endif %}
     </div>
 
-    {% if is_coordenador %}
-    <button id="openModalBtn">Criar Aviso</button>
-    {% endif %}
-</div>
-
-<!-- Estrutura da modal -->
-<div id="modal" class="modal">
-    <div class="modal-content" style="display: flexbox; justify-content: center;">
-        <span id="closeModalBtn" class="close">&times;</span>
-        <h2>Criar um Novo Aviso</h2>
-        <form id="createNoticeForm">
-            {% csrf_token %}
-            <textarea name="mensagem" rows="4" placeholder="Escreva um novo aviso aqui..." required></textarea>
-            <button type="submit">Publicar Aviso</button>
-        </form>
+    <!-- Estrutura da modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content" style="display: flexbox; justify-content: center;">
+            <span id="closeModalBtn" class="close">&times;</span>
+            <h2>Criar um Novo Aviso</h2>
+            <form id="createNoticeForm">
+                {% csrf_token %}
+                <textarea name="mensagem" rows="4" placeholder="Escreva um novo aviso aqui..." required></textarea>
+                <button type="submit">Publicar Aviso</button>
+            </form>
+        </div>
     </div>
 </div>
+
 
 <script src="{% static 'js/script.js' %}"></script>
 
 <script>
-// Lógica JavaScript para criar um novo aviso usando AJAX
-document.getElementById('createNoticeForm').addEventListener('submit', function(e) {
-    e.preventDefault(); // Impede o comportamento padrão do formulário
+    // Lógica JavaScript para criar um novo aviso usando AJAX
+    document.getElementById('createNoticeForm').addEventListener('submit', function (e) {
+        e.preventDefault(); // Impede o comportamento padrão do formulário
 
-    const formData = new FormData(this); // Captura os dados do formulário
+        const formData = new FormData(this); // Captura os dados do formulário
 
-    fetch("{% url 'muralaviso' %}", {
-        method: "POST",
-        body: formData,
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'sucesso') {
-            // Adiciona o novo aviso à lista sem recarregar a página
-            const noticeList = document.getElementById('noticeList');
-            const newNotice = document.createElement('div');
-            newNotice.classList.add('notice-item');
-            newNotice.innerHTML = `<p class="notice-message">${data.mensagem}</p><small>${data.data_criacao}</small>`;
-            
-            // Adiciona botões de edição e exclusão ao novo aviso
-            newNotice.innerHTML += `
+        fetch("{% url 'muralaviso' %}", {
+            method: "POST",
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'sucesso') {
+                    // Adiciona o novo aviso à lista sem recarregar a página
+                    const noticeList = document.getElementById('noticeList');
+                    const newNotice = document.createElement('div');
+                    newNotice.classList.add('notice-item');
+                    newNotice.innerHTML = `<p class="notice-message">${data.mensagem}</p><small>${data.data_criacao}</small>`;
+                    
+
+                    // Adiciona botões de edição e exclusão ao novo aviso se o usuário for coordenador
+                    newNotice.innerHTML += `
                 <div class="notice-actions" style="display: flex; justify-content: center; gap: 10px; padding: 15px;">
+                    {% if is_coordenador %}
                     <button style="border-radius: 10px;"><a href="#" class="btn btn-edit" style="color: #000;">Editar</a></button>
                     <button style="border-radius: 10px;"><a href="#" class="btn btn-delete" style="color: #000;">Excluir</a></button>
+                    {% endif %}
                 </div>`;
-            
-            noticeList.prepend(newNotice); // Adiciona o novo aviso no topo da lista
-            
-            // Limpa o campo do textarea
-            document.querySelector('textarea[name="mensagem"]').value = '';
-        } else {
-            alert(data.mensagem); // Exibe mensagem de erro
-        }
-    })
-    .catch(error => console.error('Erro:', error));
-});
+
+                    noticeList.prepend(newNotice); // Adiciona o novo aviso no topo da lista
+
+                    // Limpa o campo do textarea
+                    document.querySelector('textarea[name="mensagem"]').value = '';
+                } else {
+                    alert(data.mensagem); // Exibe mensagem de erro
+                }
+            })
+            .catch(error => console.error('Erro:', error));
+    });
 </script>
 
 <style>
