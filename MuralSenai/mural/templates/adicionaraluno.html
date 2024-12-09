@@ -15,9 +15,9 @@ SENAI - ADICIONAR ALUNO
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-group" style="text-align: center;">
-                        <label for="id_foto" class="foto-btn">
+                        <label for="id_foto" class="foto-btn" style="border: 5px #555; border-color: #555;">
                             <img id="foto-preview" src="{% static 'default-user.png' %}" alt="Foto do Aluno" 
-                                 style="width: 150px; height: 150px; border-radius: 50%; cursor: pointer;">
+                                 style="width: 80px; height: 80px; border-radius: 50%; cursor: pointer; border: 2px solid black;">
                         </label>
                         <input type="file" id="id_foto" name="foto">
                         <p style="margin-top: 10px;">Clique na foto para selecionar</p>
@@ -109,6 +109,24 @@ SENAI - ADICIONAR ALUNO
         border: 1px solid #ccc;
         font-size: 16px;
         margin-top: 5px;
+    }
+
+    .form-group label {
+        font-size: 18px;
+        width: 100px;
+        margin-right: 10px;
+    }
+
+    .form-control {
+        background-color: #bcbcbc80;
+        color: rgb(0, 0, 0);
+        border: 1px solid #686868;
+        padding: 7px;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        width: 400px;
+        box-sizing: border-box;
     }
 
     .btn {
