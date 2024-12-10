@@ -7,47 +7,56 @@ SENAI - INFORMAÇÕES CARÔMETRO
 {% endblock %}
 
 {% block body %}
-<div class="container" style="padding-top: 100px; display: flexbox; justify-content: center; align-items: center;">
-
+<div class="container" style="padding-top: 100px; display: flex; justify-content: center; align-items: center;">
   <!-- Seção do carômetro com informações do usuário -->
   <section class="carometro">
-    <h1>Carômetro</h1>
+    <h1 style="font-size: 2.5em; font-weight: bold; margin-bottom: 40px; text-align: center; font-family: 'Inria Serif', serif;">
+      Carômetro
+    </h1>
 
-    
-
-
-    <ul style="list-style: none; padding: 0;">
+    <ul style="list-style: none; padding: 0; width: 100%;">
       {% for aluno in alunos %}
-        <li style="margin-bottom: 20px; padding-bottom: 10px;">
+        <li style="background-color: #ededed; border: 2px solid #f00; border-radius: 10px; padding: 20px; margin-bottom: 20px; color: white; text-align: center;">
           {% if aluno.foto %}
-            <img src="{{ aluno.foto.url }}" alt="Foto do Aluno" style="width: 150px; height: 150px; border-radius: 50%; display: block; margin-bottom: 10px;">
+            <img src="{{ aluno.foto.url }}" alt="Foto do Aluno" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin-bottom: 20px;">
           {% else %}
-            <i class="bi bi-person-circle" style="font-size: 150px; display: block; margin-bottom: 10px;"></i>
+            <i class="bi bi-person-circle" style="font-size: 150px; margin-bottom: 20px;"></i>
           {% endif %}
-          <strong>Nome:</strong> {{ aluno.nome }} <br>
-          <strong>Telefone:</strong> {{ aluno.telefone }} <br>
-          <strong>Pai:</strong> {{ aluno.nome_pai }} <br>
-          <strong>Mãe:</strong> {{ aluno.nome_mae }} <br>
-          <strong>Turma:</strong> {{ aluno.turma }} <br>
-          <strong>Observações:</strong> {{ aluno.observacoes }} <br>
+          <div style="text-align: left; margin: 0 auto; max-width: 600px;">
+            <p style="margin-left: 45px;"><strong style="font-family: 'Inria Serif', serif;">Nome:</strong> {{ aluno.nome }}</p>
+            <p style="margin-left: 45px;"><strong style="font-family: 'Inria Serif', serif;">Telefone:</strong> {{ aluno.telefone }}</p>
+            <p style="margin-left: 45px;"><strong style="font-family: 'Inria Serif', serif;">Pai:</strong> {{ aluno.nome_pai }}</p>
+            <p style="margin-left: 45px;"><strong style="font-family: 'Inria Serif', serif;">Mãe:</strong> {{ aluno.nome_mae }}</p>
+            <p style="margin-left: 45px;"><strong style="font-family: 'Inria Serif', serif;">Turma:</strong> {{ aluno.turma }}</p>
+            <p style="padding-top: 20px;"><strong style="font-family: 'Inria Serif', serif;">Observações:</strong> {{ aluno.observacoes }}</p>
+          </div>
         </li>
       {% empty %}
-        <li>Não há alunos cadastrados.</li>
+        <li style="text-align: center; color: white;">Não há alunos cadastrados.</li>
       {% endfor %}
     </ul>
   </section>
 </div>
+
+<script src="{% static 'js/script.js' %}"></script>
 {% endblock %}
 
 <style>
   body {
-    color: white;
-    font-family: sans-serif;
+    font-family: 'Inria Serif', serif;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
+    background-image: url("{% static 'img/Plano de Fundo Web - Claro - Mural.png' %}");
+    background-size: cover;
+    /* height: 100vh; */
+    background-attachment: fixed;
+    /* Mantém o background fixo */
+    background-position: center;
+    /* Centraliza o background */
+    background-repeat: no-repeat;
   }
 
   .container {
@@ -59,84 +68,65 @@ SENAI - INFORMAÇÕES CARÔMETRO
     max-width: 800px;
     margin: auto;
     padding: 20px;
+    background-image: url("{% static 'img/Plano de Fundo Web - Claro - Mural.png' %}");
+    background-size: cover;
+    /* height: 100vh; */
+    background-attachment: fixed;
+    /* Mantém o background fixo */
+    background-position: center;
+    /* Centraliza o background */
+    background-repeat: no-repeat;
   }
 
-  h1 {
-    font-size: 3em; /* Tamanho maior para o título */
-    margin-bottom: 30px;
-    color: #ffcc00;
+  .carometro {
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    background-image: url("{% static 'img/Plano de Fundo Web - Claro - Mural.png' %}");
+    background-size: cover;
+    /* height: 100vh; */
+    background-attachment: fixed;
+    /* Mantém o background fixo */
+    background-position: center;
+    /* Centraliza o background */
+    background-repeat: no-repeat;
   }
 
-  ul {
+  .carometro ul {
     list-style: none;
     padding: 0;
-    margin: 0;
-    width: 100%;
   }
 
-  li {
+  .carometro li {
     background-color: #333;
     border: 1px solid #444;
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
-    font-size: 1.5em; /* Aumenta o tamanho da letra */
     color: white;
-    text-align: left; /* Texto alinhado à esquerda */
+    text-align: center;
   }
 
-  li img {
-    display: block;
-    margin: 0 auto 20px; /* Centraliza a imagem */
+  .carometro li img {
     width: 150px;
     height: 150px;
     border-radius: 50%;
     object-fit: cover;
+    margin-bottom: 20px;
   }
 
-  .extra-info {
-    margin-top: 30px;
-    font-size: 1.2em; /* Ajusta o tamanho do texto das informações extras */
-    color: #ddd;
+  .carometro li p {
+    margin: 5px 0;
+    text-align: center;
+    margin-left: 30px;
   }
 
-  /* Botões de edição e exclusão */
-  .edit-delete-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
-  }
-
-  .edit-button,
-  .delete-button {
-    color: white;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 1.2em;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .edit-button {
-    background-color: #007bff;
-  }
-
-  .delete-button {
-    background-color: #dc3545;
-  }
-
-  .edit-button:hover {
-    background-color: #0056b3;
-  }
-
-  .delete-button:hover {
-    background-color: #c82333;
+  .carometro li div {
+    text-align: left;
+    margin: 0 auto;
+    max-width: 600px; /* Limita a largura dos textos */
   }
 </style>
-
-
 
 {% block extra_js %}
 <link rel="stylesheet" href="{% static 'css/navStyle.css' %}">

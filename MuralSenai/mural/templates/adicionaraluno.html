@@ -1,5 +1,4 @@
 {% extends 'index.html' %}
-
 {% load static %}
 
 {% block title %}
@@ -14,7 +13,7 @@ SENAI - ADICIONAR ALUNO
             <div class="right-side">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="form-group" style="text-align: center;">
+                    <div class="form-group" style=" display: flexbox; text-align: center; align-items: center; justify-content: center;">
                         <label for="id_foto" class="foto-btn" style="border: 5px #555; border-color: #555;">
                             <img id="foto-preview" src="{% static 'default-user.png' %}" alt="Foto do Aluno" 
                                  style="width: 80px; height: 80px; border-radius: 50%; cursor: pointer; border: 2px solid black;">
@@ -137,7 +136,9 @@ SENAI - ADICIONAR ALUNO
         font-size: 18px;
         transition: background-color 0.3s;
         border-radius: 5px;
-        padding: 10px 20px;
+        width: 200px;
+        margin-top: 15px;
+        margin-left: 90px;
         font-family: 'Inria Serif', serif;
         font-weight: bold;
     }

@@ -90,29 +90,38 @@ def cadastro(request):
 
 @login_required
 def carometro(request):
-    cursos = ACurso.objects.all()
+    # Ordena os cursos pelo campo 'curso'
+    cursos = ACurso.objects.all().order_by('curso')
 
+    # Verifica se o usuário é coordenador
     is_coordenador = request.user.groups.filter(name='Coordenador').exists()
 
-    context = {'cursos': cursos}
-    context["is_coordenador"] = is_coordenador
+    # Passa os dados para o contexto
+    context = {'cursos': cursos, 'is_coordenador': is_coordenador}
     return render(request, 'carometro.html', context)
+
 
 @login_required
 def carometro2(request, curso_id):
-    turmas = ATurma.objects.filter(curso=curso_id)
+    # Filtra as turmas pelo curso e ordena pelo campo 'turma'
+    turmas = ATurma.objects.filter(curso=curso_id).order_by('turma')
 
+    # Verifica se o usuário é coordenador
     is_coordenador = request.user.groups.filter(name='Coordenador').exists()
 
-    print("Turmas encontradas:", turmas)
-    context = {'turmas': turmas}
-    context["is_coordenador"] = is_coordenador
+    # Passa os dados para o contexto
+    context = {'turmas': turmas, 'is_coordenador': is_coordenador}
     return render(request, 'carometro2.html', context)
+
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from .models import AAluno
 
 @login_required
 def carometro3(request, turma_id):
-    # Filtra os alunos pela turma
-    alunos = AAluno.objects.filter(turma=turma_id)
+    # Filtra os alunos pela turma e os ordena pelo nome
+    alunos = AAluno.objects.filter(turma=turma_id).order_by('nome')
     
     # Verifica se o usuário é coordenador
     is_coordenador = request.user.groups.filter(name='Coordenador').exists()
@@ -125,6 +134,7 @@ def carometro3(request, turma_id):
 
     # Retorna o template com o contexto
     return render(request, 'carometro3.html', context)
+
 
 
 def informacoescar(request, aluno_id):

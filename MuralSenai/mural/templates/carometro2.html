@@ -6,10 +6,10 @@
 SENAI - CARÔMETRO
 {% endblock %}
 
-{% block body %},
+{% block body %}
 <div class="container" style="padding-top: 80px; display: block;">
   <!-- Botão de retorno -->
-  <div style="justify-content: center; align-items: center; margin-top: 230px; position: fixed;">
+  <div style="justify-content: center; align-items: center; margin-top: 250px; position: fixed; margin-left:40px ;">
     <a href="http://127.0.0.1:8000/carometro" style="color: rgb(183, 33, 33); font-size: 50px;">
       <i class="bi bi-arrow-left-circle-fill"></i>
     </a>
@@ -17,7 +17,7 @@ SENAI - CARÔMETRO
 
   {% if is_coordenador %}
   <div class="buttons-adicionais" 
-     style="background-color: #d9d9d9; width: 20px; display: flex; align-items: center; border-radius: 15px; padding-left: 20px; padding-right: 20px; margin-top: 20px; margin-left: 1200px; height: 50px; margin-bottom: 10px;">
+     style="background-color: #d9d9d9; width: 20px; display: flex; align-items: center; border-radius: 15px; padding-left: 20px; padding-right: 20px; margin-top: 20px; margin-left: 1200px; height: 50px; margin-bottom: 40px;">
         <a href="{% url 'adicionarturma' %}">
             <i class="bi bi-person-plus" style="font-size: 20px;"></i>
         </a>
@@ -55,6 +55,8 @@ SENAI - CARÔMETRO
 </div>
 
 <script src="{% static 'js/script.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
 
 <style>
   body {
@@ -62,6 +64,8 @@ SENAI - CARÔMETRO
     font-family: sans-serif;
     margin: 0;
     align-items: center;
+    background: url('../MuralSenai/static/img/Plano de Fundo Web - Escuro - Mural.png');
+    height: autox ;
   }
 
   .logo {
@@ -76,6 +80,14 @@ SENAI - CARÔMETRO
     align-items: center;
     height: 100vh;
     margin: 0 auto;
+    background-image: url("{% static 'img/Plano de Fundo Web - Claro - Mural.png' %}");
+    background-size: cover;
+    /* height: 100vh; */
+    background-attachment: fixed;
+    /* Mantém o background fixo */
+    background-position: center;
+    /* Centraliza o background */
+    background-repeat: no-repeat;
   }
 
   .buttons {
@@ -116,6 +128,7 @@ SENAI - CARÔMETRO
       display: flex;
       gap: 10px; /* Espaçamento entre os botões de editar e excluir */
       margin-top:10px; /* Margem acima dos botões */
+      margin-bottom: 20px;
       justify-content:center; /* Centraliza os botões */
    }
 </style>

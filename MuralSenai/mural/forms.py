@@ -31,7 +31,7 @@ class FormAluno(forms.ModelForm):
             'observacoes': forms.Textarea(attrs={'class': 'form-control'}),
         }
 
-    turma = forms.ModelChoiceField(queryset=ATurma.objects.all(), empty_label="Selecione a Turma", widget=forms.Select(attrs={'class': 'form-control'}))
+    turma = forms.ModelChoiceField(queryset=ATurma.objects.all(), empty_label="---------", widget=forms.Select(attrs={'class': 'form-control'}))
 
     
 class FormCurso(forms.Form):

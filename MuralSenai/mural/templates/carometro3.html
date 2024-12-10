@@ -7,55 +7,57 @@ SENAI - CARÔMETRO
 {% endblock %}
 
 {% block body %}
-<div class="container" style="padding-top: 80px; display: block;">
-  <div style="justify-content: center; align-items: center; margin-top: 230px; position: fixed;">
-    <a href="http://127.0.0.1:8000/carometro" style="color: rgb(183, 33, 33); font-size: 50px;">
-      <i class="bi bi-arrow-left-circle-fill"></i>
-    </a>
-  </div>
 
-  {% if is_coordenador %}
-  <div class="buttons-adicionais"
-    style="background-color: #d9d9d9; width: 20px; display: flex; align-items: center; border-radius: 15px; padding-left: 20px; padding-right: 20px; margin-top: 20px; margin-left: 1200px; height: 50px; margin-bottom: 10px;">
-    <a href="{% url 'adicionaraluno' %}">
-      <i class="bi bi-person-plus" style="font-size: 20px;"></i>
-    </a>
-  </div>
-  {% endif %}
+<body>
 
-  <div class="buttons" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
-    {% if alunos %}
-    {% for aluno in alunos %}
-    <div class="button-group">
-      <a href="{% url 'informacoescar' aluno_id=aluno.id %}" class="button-1">
-        <i class="bi bi-inboxes"></i>
+  <div class="container" style="padding-top: 80px; display: block;">
+    <div style="justify-content: center; align-items: center; margin-top: 250px; position: fixed; margin-left:40px ">
+      <a href="http://127.0.0.1:8000/carometro" style="color: rgb(183, 33, 33); font-size: 50px;">
+        <i class="bi bi-arrow-left-circle-fill"></i>
       </a>
-      <h1 class="button-title">{{ aluno.nome }}</h1>
-
-      <div class="edit-delete-buttons">
-        {% if is_coordenador %}
-        <button><a href="{% url 'editaraluno' aluno.id %}" class="edit-button">Editar</a></button>
-        <form method="POST" action="{% url 'excluiraluno' aluno.id %}">
-          {% csrf_token %}
-          <button type="submit" onclick="return confirm('Tem certeza de que deseja excluir este aluno?')">
-            Excluir
-          </button>
-        </form>
-        {% endif %}
-      </div>
     </div>
-    {% endfor %}
-    {% else %}
-    <p>Nenhum aluno encontrado.</p>
-    {% endif %}
+
+    <div class="buttons" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
+      {% if is_coordenador %}
+      <div class="buttons-adicionais"
+        style="background-color: #d9d9d9; width: 20px; display: flex; align-items: center; border-radius: 15px; padding-left: 20px; padding-right: 20px; margin-top: 20px; margin-left: 1200px; height: 50px; margin-bottom: 40px;">
+        <a href="{% url 'adicionaraluno' %}">
+          <i class="bi bi-person-plus" style="font-size: 20px;"></i>
+        </a>
+      </div>
+      {% endif %}
+      {% if alunos %}
+      {% for aluno in alunos %}
+      <div class="button-group">
+        <a href="{% url 'informacoescar' aluno_id=aluno.id %}" class="button-1">
+          <i class="bi bi-inboxes"></i>
+        </a>
+        <h1 class="button-title">{{ aluno.nome }}</h1>
+
+        <div class="edit-delete-buttons">
+          {% if is_coordenador %}
+          <button><a href="{% url 'editaraluno' aluno.id %}" class="edit-button">Editar</a></button>
+          <form method="POST" action="{% url 'excluiraluno' aluno.id %}">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Tem certeza de que deseja excluir este aluno?')">
+              Excluir
+            </button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <p>Nenhum aluno encontrado.</p>
+      {% endif %}
+    </div>
   </div>
-</div>
+</body>
 
 <script src="{% static 'js/script.js' %}"></script>
 
 <style>
   body {
-    color: white;
     font-family: sans-serif;
     margin: 0;
     align-items: center;
@@ -71,8 +73,17 @@ SENAI - CARÔMETRO
     display: flex;
     justify-content: center;
     align-items: center;
-    height: auto; /* Ajuste para permitir a altura automática */
+    height: auto;
+    /* Ajuste para permitir a altura automática */
     margin: 0 auto;
+    background-image: url("{% static 'img/Plano de Fundo Web - Claro - Mural.png' %}");
+    background-size: cover;
+    /* height: 100vh; */
+    background-attachment: fixed;
+    /* Mantém o background fixo */
+    background-position: center;
+    /* Centraliza o background */
+    background-repeat: no-repeat;
   }
 
   .buttons {
@@ -110,39 +121,44 @@ SENAI - CARÔMETRO
   }
 
   .edit-delete-buttons {
-      display: flex;
-      flex-direction: column; /* Alinha os botões verticalmente */
-      align-items: center; /* Centraliza os botões horizontalmente */
-      gap: 10px; /* Espaçamento entre os botões */
-      margin-top:10px; /* Margem acima dos botões */
-   }
+    display: flex;
+    flex-direction: row;
+    /* Alinha os botões verticalmente */
+    align-items: center;
+    /* Centraliza os botões horizontalmente */
+    gap: 10px;
+    /* Espaçamento entre os botões */
+    margin-top: 10px;
+    /* Margem acima dos botões */
+    margin-bottom: 20px;
+  }
 </style>
 
 <script>
-document.querySelectorAll('.delete-button').forEach(button => {
-   button.addEventListener('click', function (e) {
-     e.preventDefault(); // Impede o comportamento padrão do link
-     const alunoId = this.getAttribute('data-id'); // Obtém o ID do aluno
+  document.querySelectorAll('.delete-button').forEach(button => {
+    button.addEventListener('click', function (e) {
+      e.preventDefault(); // Impede o comportamento padrão do link
+      const alunoId = this.getAttribute('data-id'); // Obtém o ID do aluno
 
-     if (confirm('Tem certeza que deseja excluir este aluno?')) {
-       fetch(`/excluiraluno/${alunoId}/`, {
-         method: 'POST',
-         headers: {
-           'X-CSRFToken': '{{ csrf_token }}', // Adicionando o token CSRF para segurança
-         }
-       })
-       .then(response => response.json())
-       .then(data => {
-         if (data.status === 'sucesso') {
-           alert(data.mensagem); // Mensagem de sucesso
-           location.reload(); // Recarrega a página para atualizar a lista de alunos
-         } else {
-           alert(data.mensagem); // Mensagem de erro
-         }
-       })
-       .catch(error => console.error('Erro:', error));
-     }
-   });
-});
+      if (confirm('Tem certeza que deseja excluir este aluno?')) {
+        fetch(`/excluiraluno/${alunoId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}', // Adicionando o token CSRF para segurança
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'sucesso') {
+              alert(data.mensagem); // Mensagem de sucesso
+              location.reload(); // Recarrega a página para atualizar a lista de alunos
+            } else {
+              alert(data.mensagem); // Mensagem de erro
+            }
+          })
+          .catch(error => console.error('Erro:', error));
+      }
+    });
+  });
 </script>
 {% endblock %}
